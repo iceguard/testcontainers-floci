@@ -1,5 +1,7 @@
 package io.floci.testcontainers.config;
 
+import java.util.List;
+import java.util.Optional;
 import org.testcontainers.containers.Container;
 
 /**
@@ -38,6 +40,7 @@ public class LambdaConfig extends AbstractServiceConfig {
     private final int containerIdleTimeoutSeconds;
     private final int regionConcurrencyLimit;
     private final int unreservedConcurrencyMin;
+    private final HotReload hotReload;
 
     private LambdaConfig(Builder builder) {
         super(builder.enabled);
@@ -52,6 +55,7 @@ public class LambdaConfig extends AbstractServiceConfig {
         this.containerIdleTimeoutSeconds = builder.containerIdleTimeoutSeconds;
         this.regionConcurrencyLimit = builder.regionConcurrencyLimit;
         this.unreservedConcurrencyMin = builder.unreservedConcurrencyMin;
+        this.hotReload = builder.hotReload;
     }
 
     public static Builder builder() {
@@ -168,6 +172,15 @@ public class LambdaConfig extends AbstractServiceConfig {
         return unreservedConcurrencyMin;
     }
 
+    /**
+     * Returns the hot-reload configuration for development workflows.
+     *
+     * @return the hot-reload configuration
+     */
+    public HotReload getHotReload() {
+        return hotReload;
+    }
+
     @Override
     public void applyEnvVarsToContainer(Container<?> container) {
         container.withEnv("FLOCI_SERVICES_LAMBDA_ENABLED", String.valueOf(isEnabled()));
@@ -183,6 +196,11 @@ public class LambdaConfig extends AbstractServiceConfig {
             container.withEnv("FLOCI_SERVICES_LAMBDA_REGION_CONCURRENCY_LIMIT", String.valueOf(regionConcurrencyLimit));
             container.withEnv("FLOCI_SERVICES_LAMBDA_UNRESERVED_CONCURRENCY_MIN", String.valueOf(unreservedConcurrencyMin));
 
+            container.withEnv("FLOCI_SERVICES_LAMBDA_HOT_RELOAD_ENABLED", String.valueOf(hotReload.enabled()));
+            if (hotReload.allowedPaths().isPresent() && !hotReload.allowedPaths().get().isEmpty()) {
+                container.withEnv("FLOCI_SERVICES_LAMBDA_HOT_RELOAD_ALLOWED_PATHS", String.join(",", hotReload.allowedPaths().get()));
+            }
+
             if (dockerNetwork != null) {
                 container.withEnv("FLOCI_SERVICES_LAMBDA_DOCKER_NETWORK", dockerNetwork);
             }
@@ -196,6 +214,31 @@ public class LambdaConfig extends AbstractServiceConfig {
                 container.addExposedPorts(port);
             }
         }
+    }
+
+    /**
+     * Configuration for hot-reload development mode.
+     */
+    public interface HotReload {
+        /**
+         * When true, the magic bucket name {@code hot-reload} triggers a bind-mount of the
+         * S3Key path (a Docker-host absolute path) into the Lambda container instead of
+         * extracting a ZIP. Changes on disk are visible on the next invocation without
+         * re-deploying. Disabled by default — when false, {@code hot-reload} is an
+         * ordinary (non-existent) bucket and returns NoSuchBucket as usual.
+         *
+         * @return {@code true} if hot-reload is enabled
+         */
+        boolean enabled();
+
+        /**
+         * Optional allow-list of absolute path prefixes. When non-empty, the S3Key supplied
+         * to a hot-reload CreateFunction/UpdateFunctionCode must start with one of these
+         * prefixes. Empty = all absolute paths are accepted.
+         *
+         * @return the list of allowed path prefixes, or empty if unrestricted
+         */
+        Optional<List<String>> allowedPaths();
     }
 
     /**
@@ -215,6 +258,7 @@ public class LambdaConfig extends AbstractServiceConfig {
         private int containerIdleTimeoutSeconds = DEFAULT_CONTAINER_IDLE_TIMEOUT_SECONDS;
         private int regionConcurrencyLimit = DEFAULT_REGION_CONCURRENCY_LIMIT;
         private int unreservedConcurrencyMin = DEFAULT_UNRESERVED_CONCURRENCY_MIN;
+        private HotReload hotReload = new DefaultHotReload(false, Optional.empty());
 
         private Builder() {
             // Allow instantiation only via LambdaConfig.builder()
@@ -346,6 +390,29 @@ public class LambdaConfig extends AbstractServiceConfig {
         }
 
         /**
+         * Sets the hot-reload configuration for development workflows.
+         *
+         * @param enabled whether hot-reload is enabled
+         * @return this builder
+         */
+        public Builder hotReload(boolean enabled) {
+            this.hotReload = new DefaultHotReload(enabled, Optional.empty());
+            return this;
+        }
+
+        /**
+         * Sets the hot-reload configuration with allowed paths.
+         *
+         * @param enabled whether hot-reload is enabled
+         * @param allowedPaths optional list of allowed path prefixes
+         * @return this builder
+         */
+        public Builder hotReload(boolean enabled, List<String> allowedPaths) {
+            this.hotReload = new DefaultHotReload(enabled, Optional.ofNullable(allowedPaths));
+            return this;
+        }
+
+        /**
          * Creates an immutable {@link LambdaConfig} from this builder.
          *
          * @return the Lambda configuration
@@ -353,5 +420,11 @@ public class LambdaConfig extends AbstractServiceConfig {
         public LambdaConfig build() {
             return new LambdaConfig(this);
         }
+    }
+
+    /**
+     * Default implementation of {@link HotReload}.
+     */
+    private record DefaultHotReload(boolean enabled, Optional<List<String>> allowedPaths) implements HotReload {
     }
 }
