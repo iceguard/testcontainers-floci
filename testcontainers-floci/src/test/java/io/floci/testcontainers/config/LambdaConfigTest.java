@@ -140,4 +140,68 @@ class LambdaConfigTest {
             assertThat(container.getExposedPorts()).doesNotContain(9300);
         }
     }
+
+    @Test
+    void shouldApplyDefaultHotReloadConfig() {
+        LambdaConfig config = LambdaConfig.builder().build();
+        assertThat(config.getHotReload().enabled()).isFalse();
+        assertThat(config.getHotReload().allowedPaths()).isEmpty();
+    }
+
+    @Test
+    void shouldApplyEnabledHotReloadConfig() {
+        LambdaConfig config = LambdaConfig.builder()
+                .hotReload(true)
+                .build();
+        assertThat(config.getHotReload().enabled()).isTrue();
+        assertThat(config.getHotReload().allowedPaths()).isEmpty();
+    }
+
+    @Test
+    void shouldApplyHotReloadConfigWithAllowedPaths() {
+        var allowedPaths = java.util.List.of("/home/user/code", "/opt/projects");
+        LambdaConfig config = LambdaConfig.builder()
+                .hotReload(true, allowedPaths)
+                .build();
+        assertThat(config.getHotReload().enabled()).isTrue();
+        assertThat(config.getHotReload().allowedPaths()).isPresent();
+        assertThat(config.getHotReload().allowedPaths().get()).containsExactly("/home/user/code", "/opt/projects");
+    }
+
+    @Test
+    void shouldApplyHotReloadEnvVarsWithDefaultConfig() {
+        GenericContainer<?> container = genericContainer();
+        LambdaConfig.builder().build().applyEnvVarsToContainer(container);
+
+        assertThat(container.getEnvMap())
+                .containsEntry("FLOCI_SERVICES_LAMBDA_HOT_RELOAD_ENABLED", "false")
+                .doesNotContainKey("FLOCI_SERVICES_LAMBDA_HOT_RELOAD_ALLOWED_PATHS");
+    }
+
+    @Test
+    void shouldApplyHotReloadEnvVarsWhenEnabled() {
+        GenericContainer<?> container = genericContainer();
+        LambdaConfig.builder()
+                .hotReload(true)
+                .build()
+                .applyEnvVarsToContainer(container);
+
+        assertThat(container.getEnvMap())
+                .containsEntry("FLOCI_SERVICES_LAMBDA_HOT_RELOAD_ENABLED", "true")
+                .doesNotContainKey("FLOCI_SERVICES_LAMBDA_HOT_RELOAD_ALLOWED_PATHS");
+    }
+
+    @Test
+    void shouldApplyHotReloadEnvVarsWithAllowedPaths() {
+        var allowedPaths = java.util.List.of("/home/user/code", "/opt/projects");
+        GenericContainer<?> container = genericContainer();
+        LambdaConfig.builder()
+                .hotReload(true, allowedPaths)
+                .build()
+                .applyEnvVarsToContainer(container);
+
+        assertThat(container.getEnvMap())
+                .containsEntry("FLOCI_SERVICES_LAMBDA_HOT_RELOAD_ENABLED", "true")
+                .containsEntry("FLOCI_SERVICES_LAMBDA_HOT_RELOAD_ALLOWED_PATHS", "/home/user/code,/opt/projects");
+    }
 }
