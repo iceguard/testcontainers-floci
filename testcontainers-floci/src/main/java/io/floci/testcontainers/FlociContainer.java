@@ -54,7 +54,6 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     public static final int PORT = 4566;
 
     private static final String DOCKER_SOCKET_PATH = "/var/run/docker.sock";
-    private static final String ROOT_USER = "root";
 
     private static final String DEFAULT_REGION = "us-east-1";
     private static final String DEFAULT_AVAILABILITY_ZONE = "us-east-1a";
@@ -142,7 +141,6 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
 
         // Allow creation of child container instances (e.g. for ECS or RDS service)
         withFileSystemBind(DockerClientFactory.instance().getRemoteDockerUnixSocketPath(), DOCKER_SOCKET_PATH);
-        withCreateContainerCmdModifier(cmd -> cmd.withUser(ROOT_USER)); // Allow binding docker socket
 
         // Configure observability and healthcheck
         withLogLevel(Level.WARN);
