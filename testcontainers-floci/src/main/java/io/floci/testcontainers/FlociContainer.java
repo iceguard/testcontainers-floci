@@ -1431,6 +1431,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         ElbV2Config.Builder builder = ElbV2Config.builder();
         configurer.accept(builder);
         this.elbV2Config = builder.build();
+        configureExposedPorts();
         elbV2Config.applyEnvVarsToContainer(this);
         return this;
     }
@@ -1446,6 +1447,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         elastiCacheConfig.applyExposedPortsToContainer(this);
         ecrConfig.applyExposedPortsToContainer(this);
         eksConfig.applyExposedPortsToContainer(this);
+        elbV2Config.applyExposedPortsToContainer(this);
     }
 
     /**

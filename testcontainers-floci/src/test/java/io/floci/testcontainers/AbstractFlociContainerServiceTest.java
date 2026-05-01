@@ -14,7 +14,11 @@ import java.net.URI;
  */
 abstract class AbstractFlociContainerServiceTest {
 
-    protected static final FlociContainer floci = new FlociContainer().withLogLevel(Level.DEBUG);
+    protected static final int LB_LISTENER_PORT = 8780;
+
+    protected static final FlociContainer floci = new FlociContainer()
+            .withLogLevel(Level.DEBUG)
+            .withElbV2Config(c -> c.listenerPort(LB_LISTENER_PORT));
 
     static {
         floci.start();
