@@ -90,7 +90,6 @@ class FlociContainerAthenaServiceTest extends AbstractFlociContainerServiceTest 
 
     @Test
     @Order(3)
-    @Disabled
     void shouldQueryAllData() {
         String queryId = executeAndAwait("SELECT * FROM " + TABLE_NAME + " ORDER BY id");
 
@@ -114,7 +113,6 @@ class FlociContainerAthenaServiceTest extends AbstractFlociContainerServiceTest 
 
     @Test
     @Order(4)
-    @Disabled
     void shouldQueryWithAggregation() {
         String queryId = executeAndAwait("SELECT SUM(amount) AS total FROM " + TABLE_NAME);
 
@@ -128,7 +126,6 @@ class FlociContainerAthenaServiceTest extends AbstractFlociContainerServiceTest 
 
     @Test
     @Order(5)
-    @Disabled
     void shouldQueryWithFilter() {
         String queryId = executeAndAwait(
                 "SELECT name, amount FROM " + TABLE_NAME + " WHERE amount > 15 ORDER BY id");
@@ -147,7 +144,6 @@ class FlociContainerAthenaServiceTest extends AbstractFlociContainerServiceTest 
 
     @Test
     @Order(6)
-    @Disabled
     void shouldListQueryExecutions() {
         String queryId = executeAndAwait("SELECT COUNT(*) AS cnt FROM " + TABLE_NAME);
 
