@@ -57,7 +57,6 @@ class FlociContainerOpenSearchServiceTest extends AbstractFlociContainerServiceT
 
     @Test
     @Order(3)
-    @Disabled
     void shouldWaitForOpenSearchReady() {
         await().atMost(Duration.ofSeconds(60))
                 .pollInterval(Duration.ofSeconds(2))
@@ -75,7 +74,6 @@ class FlociContainerOpenSearchServiceTest extends AbstractFlociContainerServiceT
 
     @Test
     @Order(4)
-    @Disabled
     void shouldIndexDocument() throws Exception {
         try (var dataTransport = createTransport()) {
             var dataClient = new org.opensearch.client.opensearch.OpenSearchClient(dataTransport);
@@ -90,7 +88,6 @@ class FlociContainerOpenSearchServiceTest extends AbstractFlociContainerServiceT
 
     @Test
     @Order(5)
-    @Disabled
     void shouldSearchDocument() throws Exception {
         try (var dataTransport = createTransport()) {
             var dataClient = new org.opensearch.client.opensearch.OpenSearchClient(dataTransport);
@@ -129,7 +126,7 @@ class FlociContainerOpenSearchServiceTest extends AbstractFlociContainerServiceT
 
     private ApacheHttpClient5Transport createTransport() {
         var host = new HttpHost("http", floci.getHost(),
-                floci.getMappedPort(floci.getOpenSearchConfig().getProxyBasePort()));
+                floci.getOpenSearchConfig().getProxyBasePort());
 
         return ApacheHttpClient5TransportBuilder.builder(host)
                 .setMapper(new JacksonJsonpMapper())

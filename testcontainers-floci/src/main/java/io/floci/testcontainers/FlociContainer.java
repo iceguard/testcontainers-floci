@@ -863,7 +863,6 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         OpenSearchConfig.Builder builder = OpenSearchConfig.builder();
         configurer.accept(builder);
         this.openSearchConfig = builder.build();
-        configureExposedPorts();
         openSearchConfig.applyEnvVarsToContainer(this);
         return this;
     }
@@ -1445,7 +1444,6 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         lambdaConfig.applyExposedPortsToContainer(this);
         rdsConfig.applyExposedPortsToContainer(this);
         elastiCacheConfig.applyExposedPortsToContainer(this);
-        openSearchConfig.applyExposedPortsToContainer(this);
         ecrConfig.applyExposedPortsToContainer(this);
         eksConfig.applyExposedPortsToContainer(this);
     }

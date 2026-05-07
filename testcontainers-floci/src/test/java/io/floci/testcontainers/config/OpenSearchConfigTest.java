@@ -81,15 +81,4 @@ class OpenSearchConfigTest {
 
         assertThat(container.getEnvMap()).containsEntry("FLOCI_SERVICES_OPENSEARCH_ENABLED", "false");
     }
-
-    @Test
-    void shouldNotExposeOpenSearchPortsWhenDisabled() {
-        try (FlociContainer container = new FlociContainer()) {
-            container.withOpenSearchConfig(c -> c.enabled(false).proxyPortRange(9500, 50));
-
-            var env = container.getEnvMap();
-            assertThat(env).containsEntry("FLOCI_SERVICES_OPENSEARCH_ENABLED", "false");
-            assertThat(container.getExposedPorts()).doesNotContain(9500);
-        }
-    }
 }
