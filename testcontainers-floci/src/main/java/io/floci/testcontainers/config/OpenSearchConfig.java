@@ -110,15 +110,6 @@ public class OpenSearchConfig extends AbstractServiceConfig {
         }
     }
 
-    @Override
-    public void applyExposedPortsToContainer(Container<?> container) {
-        if (isEnabled()) {
-            for (int port = proxyBasePort; port <= getProxyMaxPort(); port++) {
-                container.addExposedPorts(port);
-            }
-        }
-    }
-
     /**
      * Builder for {@link OpenSearchConfig}.
      */
