@@ -18,7 +18,7 @@ abstract class AbstractFlociContainerServiceTest {
 
     protected static final int LB_LISTENER_PORT = 8780;
 
-    private static final boolean DEBUG_LOGGING = false;
+    private static final boolean DEBUG_LOGGING = true;
 
     protected static final FlociContainer floci;
 

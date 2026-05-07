@@ -1,8 +1,12 @@
 package io.floci.testcontainers;
 
+import com.github.dockerjava.api.model.Container;
 import org.apache.hc.core5.http.HttpHost;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
 import org.opensearch.client.opensearch._types.FieldValue;
 import org.opensearch.client.opensearch._types.HealthStatus;
@@ -10,6 +14,9 @@ import org.opensearch.client.opensearch.core.SearchResponse;
 import org.opensearch.client.opensearch.core.search.Hit;
 import org.opensearch.client.transport.httpclient5.ApacheHttpClient5Transport;
 import org.opensearch.client.transport.httpclient5.ApacheHttpClient5TransportBuilder;
+import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
+import org.testcontainers.utility.LogUtils;
 import software.amazon.awssdk.services.opensearch.OpenSearchClient;
 import software.amazon.awssdk.services.opensearch.model.DomainInfo;
 import software.amazon.awssdk.services.opensearch.model.DomainStatus;
@@ -29,7 +36,10 @@ class FlociContainerOpenSearchServiceTest extends AbstractFlociContainerServiceT
     @BeforeAll
     static void setUp() {
         domainName = "test-" + System.currentTimeMillis();
-        openSearch = client(OpenSearchClient.builder());
+        openSearch = client(OpenSearchClient.builder()
+                .overrideConfiguration(c -> c
+                        .apiCallAttemptTimeout(Duration.ofSeconds(60))
+                        .apiCallTimeout(Duration.ofSeconds(300))));
     }
 
     @Test
@@ -57,8 +67,13 @@ class FlociContainerOpenSearchServiceTest extends AbstractFlociContainerServiceT
 
     @Test
     @Order(3)
-    @Disabled
     void shouldWaitForOpenSearchReady() {
+        List<Container> openSearchContainers = floci.getDockerClient().listContainersCmd().withNameFilter(List.of("floci-opensearch-" + domainName)).exec();
+        assertThat(openSearchContainers).hasSize(1);
+
+        Container container = openSearchContainers.get(0);
+        LogUtils.followOutput(floci.getDockerClient(), container.getId(), new Slf4jLogConsumer(LoggerFactory.getLogger("OPENSEARCH")));
+
         await().atMost(Duration.ofSeconds(60))
                 .pollInterval(Duration.ofSeconds(2))
                 .ignoreExceptions()
@@ -75,7 +90,6 @@ class FlociContainerOpenSearchServiceTest extends AbstractFlociContainerServiceT
 
     @Test
     @Order(4)
-    @Disabled
     void shouldIndexDocument() throws Exception {
         try (var dataTransport = createTransport()) {
             var dataClient = new org.opensearch.client.opensearch.OpenSearchClient(dataTransport);
@@ -90,7 +104,6 @@ class FlociContainerOpenSearchServiceTest extends AbstractFlociContainerServiceT
 
     @Test
     @Order(5)
-    @Disabled
     void shouldSearchDocument() throws Exception {
         try (var dataTransport = createTransport()) {
             var dataClient = new org.opensearch.client.opensearch.OpenSearchClient(dataTransport);
