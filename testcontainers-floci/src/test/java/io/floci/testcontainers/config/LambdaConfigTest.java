@@ -25,6 +25,7 @@ class LambdaConfigTest {
         assertThat(config.getContainerIdleTimeoutSeconds()).isEqualTo(300);
         assertThat(config.getRegionConcurrencyLimit()).isEqualTo(1000);
         assertThat(config.getUnreservedConcurrencyMin()).isEqualTo(100);
+        assertThat(config.getAwsConfigPath()).isNull();
     }
 
     @Test
@@ -41,6 +42,7 @@ class LambdaConfigTest {
                 .containerIdleTimeoutSeconds(600)
                 .regionConcurrencyLimit(500)
                 .unreservedConcurrencyMin(50)
+                .awsConfigPath("/home/user/.aws")
                 .build();
         assertThat(config.isEnabled()).isFalse();
         assertThat(config.isEphemeral()).isTrue();
@@ -55,6 +57,7 @@ class LambdaConfigTest {
         assertThat(config.getContainerIdleTimeoutSeconds()).isEqualTo(600);
         assertThat(config.getRegionConcurrencyLimit()).isEqualTo(500);
         assertThat(config.getUnreservedConcurrencyMin()).isEqualTo(50);
+        assertThat(config.getAwsConfigPath()).isEqualTo("/home/user/.aws");
     }
 
     @Test
@@ -73,7 +76,8 @@ class LambdaConfigTest {
                 .containsEntry("FLOCI_SERVICES_LAMBDA_CONTAINER_IDLE_TIMEOUT_SECONDS", "300")
                 .containsEntry("FLOCI_SERVICES_LAMBDA_REGION_CONCURRENCY_LIMIT", "1000")
                 .containsEntry("FLOCI_SERVICES_LAMBDA_UNRESERVED_CONCURRENCY_MIN", "100")
-                .doesNotContainKey("FLOCI_SERVICES_LAMBDA_DOCKER_NETWORK");
+                .doesNotContainKey("FLOCI_SERVICES_LAMBDA_DOCKER_NETWORK")
+                .doesNotContainKey("FLOCI_SERVICES_LAMBDA_AWS_CONFIG_PATH");
     }
 
     @Test
@@ -90,6 +94,7 @@ class LambdaConfigTest {
                 .regionConcurrencyLimit(500)
                 .unreservedConcurrencyMin(50)
                 .dockerNetwork("my-network")
+                .awsConfigPath("/home/user/.aws")
                 .build()
                 .applyEnvVarsToContainer(container);
 
@@ -104,7 +109,8 @@ class LambdaConfigTest {
                 .containsEntry("FLOCI_SERVICES_LAMBDA_CONTAINER_IDLE_TIMEOUT_SECONDS", "600")
                 .containsEntry("FLOCI_SERVICES_LAMBDA_REGION_CONCURRENCY_LIMIT", "500")
                 .containsEntry("FLOCI_SERVICES_LAMBDA_UNRESERVED_CONCURRENCY_MIN", "50")
-                .containsEntry("FLOCI_SERVICES_LAMBDA_DOCKER_NETWORK", "my-network");
+                .containsEntry("FLOCI_SERVICES_LAMBDA_DOCKER_NETWORK", "my-network")
+                .containsEntry("FLOCI_SERVICES_LAMBDA_AWS_CONFIG_PATH", "/home/user/.aws");
     }
 
     @Test
@@ -203,5 +209,16 @@ class LambdaConfigTest {
         assertThat(container.getEnvMap())
                 .containsEntry("FLOCI_SERVICES_LAMBDA_HOT_RELOAD_ENABLED", "true")
                 .containsEntry("FLOCI_SERVICES_LAMBDA_HOT_RELOAD_ALLOWED_PATHS", "/home/user/code,/opt/projects");
+    }
+
+    @Test
+    void shouldNotApplyAwsConfigPathEnvVarWhenBlank() {
+        GenericContainer<?> container = genericContainer();
+        LambdaConfig.builder()
+                .awsConfigPath("   ")
+                .build()
+                .applyEnvVarsToContainer(container);
+
+        assertThat(container.getEnvMap()).doesNotContainKey("FLOCI_SERVICES_LAMBDA_AWS_CONFIG_PATH");
     }
 }

@@ -41,6 +41,7 @@ public class LambdaConfig extends AbstractServiceConfig {
     private final int regionConcurrencyLimit;
     private final int unreservedConcurrencyMin;
     private final HotReload hotReload;
+    private final String awsConfigPath;
 
     private LambdaConfig(Builder builder) {
         super(builder.enabled);
@@ -56,6 +57,7 @@ public class LambdaConfig extends AbstractServiceConfig {
         this.regionConcurrencyLimit = builder.regionConcurrencyLimit;
         this.unreservedConcurrencyMin = builder.unreservedConcurrencyMin;
         this.hotReload = builder.hotReload;
+        this.awsConfigPath = builder.awsConfigPath;
     }
 
     public static Builder builder() {
@@ -181,6 +183,20 @@ public class LambdaConfig extends AbstractServiceConfig {
         return hotReload;
     }
 
+    /**
+     * Returns the host path to bind-mount (read-only) into Lambda containers at
+     * {@code /opt/aws-config}, or {@code null} if not set.
+     *
+     * <p>When present, no AWS credential env vars are injected; instead
+     * {@code AWS_SHARED_CREDENTIALS_FILE} and {@code AWS_CONFIG_FILE} are set to point
+     * at the mounted files. Blank values are treated as absent.
+     *
+     * @return the AWS config path, or {@code null} if not configured
+     */
+    public String getAwsConfigPath() {
+        return awsConfigPath;
+    }
+
     @Override
     public void applyEnvVarsToContainer(Container<?> container) {
         container.withEnv("FLOCI_SERVICES_LAMBDA_ENABLED", String.valueOf(isEnabled()));
@@ -203,6 +219,10 @@ public class LambdaConfig extends AbstractServiceConfig {
 
             if (dockerNetwork != null) {
                 container.withEnv("FLOCI_SERVICES_LAMBDA_DOCKER_NETWORK", dockerNetwork);
+            }
+
+            if (awsConfigPath != null && !awsConfigPath.isBlank()) {
+                container.withEnv("FLOCI_SERVICES_LAMBDA_AWS_CONFIG_PATH", awsConfigPath);
             }
         }
     }
@@ -259,6 +279,7 @@ public class LambdaConfig extends AbstractServiceConfig {
         private int regionConcurrencyLimit = DEFAULT_REGION_CONCURRENCY_LIMIT;
         private int unreservedConcurrencyMin = DEFAULT_UNRESERVED_CONCURRENCY_MIN;
         private HotReload hotReload = new DefaultHotReload(false, Optional.empty());
+        private String awsConfigPath;
 
         private Builder() {
             // Allow instantiation only via LambdaConfig.builder()
@@ -409,6 +430,20 @@ public class LambdaConfig extends AbstractServiceConfig {
          */
         public Builder hotReload(boolean enabled, List<String> allowedPaths) {
             this.hotReload = new DefaultHotReload(enabled, Optional.ofNullable(allowedPaths));
+            return this;
+        }
+
+        /**
+         * Sets the host path to bind-mount (read-only) into Lambda containers at
+         * {@code /opt/aws-config}. When set, no AWS credential env vars are injected;
+         * instead {@code AWS_SHARED_CREDENTIALS_FILE} and {@code AWS_CONFIG_FILE} are
+         * pointed at the mounted files. Blank values are treated as absent.
+         *
+         * @param awsConfigPath the host path, or {@code null} / blank to unset
+         * @return this builder
+         */
+        public Builder awsConfigPath(String awsConfigPath) {
+            this.awsConfigPath = awsConfigPath;
             return this;
         }
 
