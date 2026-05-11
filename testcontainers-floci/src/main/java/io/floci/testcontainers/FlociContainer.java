@@ -106,6 +106,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     private BackupConfig backupConfig = BackupConfig.builder().build();
     private TransferFamilyConfig transferFamilyConfig = TransferFamilyConfig.builder().build();
     private Route53Config route53Config = Route53Config.builder().build();
+    private TextractConfig textractConfig = TextractConfig.builder().build();
 
     /**
      * Creates a new Floci container with the default image ({@code floci/floci:latest}).
@@ -1525,6 +1526,34 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     }
 
     /**
+     * Textract-specific settings.
+     *
+     * @return the Textract configuration
+     */
+    public TextractConfig getTextractConfig() {
+        return textractConfig;
+    }
+
+    /**
+     * Configures Textract-specific settings.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withTextractConfig(c -> c.enabled(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link TextractConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withTextractConfig(Consumer<TextractConfig.Builder> configurer) {
+        TextractConfig.Builder builder = TextractConfig.builder();
+        configurer.accept(builder);
+        this.textractConfig = builder.build();
+        textractConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
      * Configures all exposed ports of the Floci container
      */
     private void configureExposedPorts() {
@@ -1586,6 +1615,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         backupConfig.applyEnvVarsToContainer(this);
         transferFamilyConfig.applyEnvVarsToContainer(this);
         route53Config.applyEnvVarsToContainer(this);
+        textractConfig.applyEnvVarsToContainer(this);
     }
 
     private static String uniqueShortId() {
