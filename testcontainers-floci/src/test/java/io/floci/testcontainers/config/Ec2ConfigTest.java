@@ -16,6 +16,7 @@ class Ec2ConfigTest {
         assertThat(config.getImdsPort()).isEqualTo(9169);
         assertThat(config.getSshPortRangeStart()).isEqualTo(2200);
         assertThat(config.getSshPortRangeEnd()).isEqualTo(2299);
+        assertThat(config.getAutoScaling().enabled()).isTrue();
     }
 
     @Test
@@ -25,12 +26,14 @@ class Ec2ConfigTest {
                 .mock(true)
                 .imdsPort(9170)
                 .sshPortRange(2300, 2399)
+                .autoScaling(false)
                 .build();
         assertThat(config.isEnabled()).isFalse();
         assertThat(config.isMock()).isTrue();
         assertThat(config.getImdsPort()).isEqualTo(9170);
         assertThat(config.getSshPortRangeStart()).isEqualTo(2300);
         assertThat(config.getSshPortRangeEnd()).isEqualTo(2399);
+        assertThat(config.getAutoScaling().enabled()).isFalse();
     }
 
     @Test
@@ -43,7 +46,8 @@ class Ec2ConfigTest {
                 .containsEntry("FLOCI_SERVICES_EC2_MOCK", "false")
                 .containsEntry("FLOCI_SERVICES_EC2_IMDS_PORT", "9169")
                 .containsEntry("FLOCI_SERVICES_EC2_SSH_PORT_RANGE_START", "2200")
-                .containsEntry("FLOCI_SERVICES_EC2_SSH_PORT_RANGE_END", "2299");
+                .containsEntry("FLOCI_SERVICES_EC2_SSH_PORT_RANGE_END", "2299")
+                .containsEntry("FLOCI_SERVICES_AUTOSCALING_ENABLED", "true");
     }
 
     @Test
@@ -54,6 +58,7 @@ class Ec2ConfigTest {
                 .mock(true)
                 .imdsPort(9170)
                 .sshPortRange(2300, 2399)
+                .autoScaling(false)
                 .build()
                 .applyEnvVarsToContainer(container);
 
@@ -62,7 +67,8 @@ class Ec2ConfigTest {
                 .containsEntry("FLOCI_SERVICES_EC2_MOCK", "true")
                 .containsEntry("FLOCI_SERVICES_EC2_IMDS_PORT", "9170")
                 .containsEntry("FLOCI_SERVICES_EC2_SSH_PORT_RANGE_START", "2300")
-                .containsEntry("FLOCI_SERVICES_EC2_SSH_PORT_RANGE_END", "2399");
+                .containsEntry("FLOCI_SERVICES_EC2_SSH_PORT_RANGE_END", "2399")
+                .containsEntry("FLOCI_SERVICES_AUTOSCALING_ENABLED", "false");
     }
 
     @Test
