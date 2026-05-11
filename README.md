@@ -156,6 +156,7 @@ class S3IntegrationTest {
 | `withDefaultAccountId(String)`        | Sets the default AWS account ID (default: `000000000000`)                                                      |
 | `withLogLevel(Level)`                 | Sets the Floci log level (`TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`)                                           |
 | `withDedicatedNetwork()`              | Creates a dedicated Docker network shared by Floci and its sibling containers (RDS, Lambda, ElastiCache, etc.) |
+| `withTlsConfig(...)`                  | Configures TLS/HTTPS (self-signed by default; optionally provide cert/key paths)                               |
 | `with*Config(...)`                    | Configures service-specific settings (see [Supported Services](#supported-services))                           |
 
 Each AWS service emulated by Floci can be individually configured via a `with*Config(...)` method on
@@ -182,6 +183,7 @@ FlociContainer floci = new FlociContainer()
 | `getSecretKey()`              | AWS secret key                                                    | `test`           |
 | `getLogLevel()`               | Configured log level                                              | `WARN`           |
 | `getDedicatedNetworkName()`   | Name of the dedicated Docker network, or `null` if not configured | `null`           |
+| `getTlsConfig()`              | Current TLS configuration                                         | —                |
 | `get*Config()`                | Current configuration of a service                                | —                |
 
 

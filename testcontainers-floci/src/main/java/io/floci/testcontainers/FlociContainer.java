@@ -1,6 +1,6 @@
 package io.floci.testcontainers;
 
-import io.floci.testcontainers.config.*;
+import io.floci.testcontainers.config.TlsConfig;
 import io.floci.testcontainers.config.services.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +64,9 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
 
     private final Path hostPersistentPath;
 
+    private TlsConfig tlsConfig = TlsConfig.builder().build();
+
+    // Services config
     private AcmConfig acmConfig = AcmConfig.builder().build();
     private ApiGatewayConfig apiGatewayConfig = ApiGatewayConfig.builder().build();
     private ApiGatewayV2Config apiGatewayV2Config = ApiGatewayV2Config.builder().build();
@@ -153,7 +156,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
                 .forPort(PORT)
                 .withStartupTimeout(Duration.ofSeconds(30)));
 
-        // Configure services
+        // Configure ports and env vars
         configureExposedPorts();
         configureEnvVars();
     }
@@ -299,6 +302,44 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
      */
     public String getDedicatedNetworkName() {
         return getEnvMap().get("FLOCI_SERVICES_DOCKER_NETWORK");
+    }
+
+    /**
+     * Returns the TLS configuration.
+     *
+     * @return the TLS configuration
+     */
+    public TlsConfig getTlsConfig() {
+        return tlsConfig;
+    }
+
+    /**
+     * Configures TLS/HTTPS for the Floci server.
+     *
+     * <p>By default, a self-signed certificate is auto-generated. To use a custom certificate,
+     * provide paths to the PEM certificate and private key files:
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withTls(c -> c.enabled(true).certPath("/certs/server.crt").keyPath("/certs/server.key"));
+     * }</pre>
+     *
+     * <p>To enable TLS with a self-signed certificate:
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withTls(c -> c.enabled(true));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link TlsConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withTlsConfig(Consumer<TlsConfig.Builder> configurer) {
+        TlsConfig.Builder builder = TlsConfig.builder();
+        configurer.accept(builder);
+        this.tlsConfig = builder.build();
+        tlsConfig.applyEnvVarsToContainer(this);
+        return this;
     }
 
     /**
@@ -1560,6 +1601,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     private void configureExposedPorts() {
         withExposedPorts(PORT);
 
+        // Services config
         lambdaConfig.applyExposedPortsToContainer(this);
         rdsConfig.applyExposedPortsToContainer(this);
         elastiCacheConfig.applyExposedPortsToContainer(this);
@@ -1570,9 +1612,12 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     }
 
     /**
-     * Configures environment variables for all services based on the current configuration objects.
+     * Configures environment variables of the Floci container
      */
     private void configureEnvVars() {
+        tlsConfig.applyEnvVarsToContainer(this);
+
+        // Services config
         acmConfig.applyEnvVarsToContainer(this);
         apiGatewayConfig.applyEnvVarsToContainer(this);
         apiGatewayV2Config.applyEnvVarsToContainer(this);
