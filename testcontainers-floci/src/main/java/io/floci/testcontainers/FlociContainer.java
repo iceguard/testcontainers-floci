@@ -103,6 +103,9 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     private CodeBuildConfig codeBuildConfig = CodeBuildConfig.builder().build();
     private CodeDeployConfig codeDeployConfig = CodeDeployConfig.builder().build();
     private ElbV2Config elbV2Config = ElbV2Config.builder().build();
+    private BackupConfig backupConfig = BackupConfig.builder().build();
+    private TransferFamilyConfig transferFamilyConfig = TransferFamilyConfig.builder().build();
+    private Route53Config route53Config = Route53Config.builder().build();
 
     /**
      * Creates a new Floci container with the default image ({@code floci/floci:latest}).
@@ -1438,6 +1441,90 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     }
 
     /**
+     * Backup-specific settings such as job completion delay.
+     *
+     * @return the Backup configuration
+     */
+    public BackupConfig getBackupConfig() {
+        return backupConfig;
+    }
+
+    /**
+     * Configures Backup-specific settings such as job completion delay.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withBackupConfig(c -> c.jobCompletionDelaySeconds(5));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link BackupConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withBackupConfig(Consumer<BackupConfig.Builder> configurer) {
+        BackupConfig.Builder builder = BackupConfig.builder();
+        configurer.accept(builder);
+        this.backupConfig = builder.build();
+        backupConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
+     * Transfer Family-specific settings.
+     *
+     * @return the Transfer Family configuration
+     */
+    public TransferFamilyConfig getTransferFamilyConfig() {
+        return transferFamilyConfig;
+    }
+
+    /**
+     * Configures Transfer Family-specific settings.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withTransferConfig(c -> c.enabled(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link TransferFamilyConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withTransferFamilyConfig(Consumer<TransferFamilyConfig.Builder> configurer) {
+        TransferFamilyConfig.Builder builder = TransferFamilyConfig.builder();
+        configurer.accept(builder);
+        this.transferFamilyConfig = builder.build();
+        transferFamilyConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
+     * Route 53-specific settings such as default nameservers.
+     *
+     * @return the Route 53 configuration
+     */
+    public Route53Config getRoute53Config() {
+        return route53Config;
+    }
+
+    /**
+     * Configures Route 53-specific settings such as default nameservers.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withRoute53Config(c -> c.defaultNameserver1("ns1.example.com"));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link Route53Config.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withRoute53Config(Consumer<Route53Config.Builder> configurer) {
+        Route53Config.Builder builder = Route53Config.builder();
+        configurer.accept(builder);
+        this.route53Config = builder.build();
+        route53Config.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
      * Configures all exposed ports of the Floci container
      */
     private void configureExposedPorts() {
@@ -1496,6 +1583,9 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         codeBuildConfig.applyEnvVarsToContainer(this);
         codeDeployConfig.applyEnvVarsToContainer(this);
         elbV2Config.applyEnvVarsToContainer(this);
+        backupConfig.applyEnvVarsToContainer(this);
+        transferFamilyConfig.applyEnvVarsToContainer(this);
+        route53Config.applyEnvVarsToContainer(this);
     }
 
     private static String uniqueShortId() {
