@@ -147,14 +147,16 @@ class S3IntegrationTest {
 
 ### Configuration
 
-| Method                   | Description                                                                                                   |
-|--------------------------|---------------------------------------------------------------------------------------------------------------|
-| `FlociContainer()`       | Creates a container with the default image (`floci/floci:latest`)                                        |
-| `FlociContainer(String)` | Creates a container with a custom image tag                                                                   |
-| `withRegion(String)`     | Sets the AWS region                                                                                           |
-| `withLogLevel(Level)`    | Sets the Floci log level (`TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`)                                          |
-| `withDedicatedNetwork()` | Creates a dedicated Docker network shared by Floci and its sibling containers (RDS, Lambda, ElastiCache, etc.) |
-| `with*Config(...)`       | Configures service-specific settings (see [Service Configuration](https://floci.io/floci/services/))                |
+| Method                                | Description                                                                                                    |
+|---------------------------------------|----------------------------------------------------------------------------------------------------------------|
+| `FlociContainer()`                    | Creates a container with the default image (`floci/floci:latest`)                                              |
+| `FlociContainer(String)`              | Creates a container with a custom image tag                                                                    |
+| `withRegion(String)`                  | Sets the AWS region (default: `us-east-1`)                                                                     |
+| `withDefaultAvailabilityZone(String)` | Sets the default availability zone (default: `us-east-1a`)                                                     |
+| `withDefaultAccountId(String)`        | Sets the default AWS account ID (default: `000000000000`)                                                      |
+| `withLogLevel(Level)`                 | Sets the Floci log level (`TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`)                                           |
+| `withDedicatedNetwork()`              | Creates a dedicated Docker network shared by Floci and its sibling containers (RDS, Lambda, ElastiCache, etc.) |
+| `with*Config(...)`                    | Configures service-specific settings (see [Supported Services](#supported-services))                           |
 
 Each AWS service emulated by Floci can be individually configured via a `with*Config(...)` method on
 `FlociContainer`. Every service configuration supports at least an `enabled(boolean)` flag to enable or
@@ -170,15 +172,17 @@ FlociContainer floci = new FlociContainer()
 
 ### Container Properties
 
-| Method                       | Description                                                       | Default    |
-|------------------------------|-------------------------------------------------------------------|------------|
-| `getEndpoint()`              | HTTP endpoint URL (e.g. `http://localhost:32781`)                 | —          |
-| `getRegion()`                | Configured AWS region                                             | `us-east-1`|
-| `getAccessKey()`             | AWS access key                                                    | `test`     |
-| `getSecretKey()`             | AWS secret key                                                    | `test`     |
-| `getLogLevel()`              | Configured log level                                              | `WARN`     |
-| `getDedicatedNetworkName()`  | Name of the dedicated Docker network, or `null` if not configured | `null`     |
-| `get*Config()`          | Current configuration of a service                                | —          |
+| Method                        | Description                                                       | Default          |
+|-------------------------------|-------------------------------------------------------------------|------------------|
+| `getEndpoint()`               | HTTP endpoint URL (e.g. `http://localhost:32781`)                 | —                |
+| `getRegion()`                 | Configured AWS region                                             | `us-east-1`      |
+| `getDefaultAvailabilityZone()`| Configured default availability zone                              | `us-east-1a`     |
+| `getDefaultAccountId()`       | Configured default AWS account ID                                 | `000000000000`   |
+| `getAccessKey()`              | AWS access key                                                    | `test`           |
+| `getSecretKey()`              | AWS secret key                                                    | `test`           |
+| `getLogLevel()`               | Configured log level                                              | `WARN`           |
+| `getDedicatedNetworkName()`   | Name of the dedicated Docker network, or `null` if not configured | `null`           |
+| `get*Config()`                | Current configuration of a service                                | —                |
 
 
 ---
