@@ -22,6 +22,7 @@ public class Ec2Config extends AbstractServiceConfig {
     private final int imdsPort;
     private final int sshPortRangeStart;
     private final int sshPortRangeEnd;
+    private final AutoScaling autoScaling;
 
     private Ec2Config(Builder builder) {
         super(builder.enabled);
@@ -29,6 +30,7 @@ public class Ec2Config extends AbstractServiceConfig {
         this.imdsPort = builder.imdsPort;
         this.sshPortRangeStart = builder.sshPortRangeStart;
         this.sshPortRangeEnd = builder.sshPortRangeEnd;
+        this.autoScaling = builder.autoScaling;
     }
 
     public static Builder builder() {
@@ -71,9 +73,19 @@ public class Ec2Config extends AbstractServiceConfig {
         return sshPortRangeEnd;
     }
 
+    /**
+     * Returns the Auto Scaling configuration.
+     *
+     * @return the Auto Scaling configuration
+     */
+    public AutoScaling getAutoScaling() {
+        return autoScaling;
+    }
+
     @Override
     public void applyEnvVarsToContainer(Container<?> container) {
         container.withEnv("FLOCI_SERVICES_EC2_ENABLED", String.valueOf(isEnabled()));
+        container.withEnv("FLOCI_SERVICES_AUTOSCALING_ENABLED", String.valueOf(autoScaling.enabled()));
 
         if (isEnabled()) {
             container.withEnv("FLOCI_SERVICES_EC2_MOCK", String.valueOf(mock));
@@ -100,6 +112,7 @@ public class Ec2Config extends AbstractServiceConfig {
         private int imdsPort = DEFAULT_IMDS_PORT;
         private int sshPortRangeStart = DEFAULT_SSH_PORT_RANGE_START;
         private int sshPortRangeEnd = DEFAULT_SSH_PORT_RANGE_END;
+        private AutoScaling autoScaling = new DefaultAutoScaling(true);
 
         private Builder() {
             // Allow instantiation only via Ec2Config.builder()
@@ -152,6 +165,17 @@ public class Ec2Config extends AbstractServiceConfig {
         }
 
         /**
+         * Sets whether Auto Scaling is enabled.
+         *
+         * @param enabled {@code true} to enable Auto Scaling (default {@code true})
+         * @return this builder
+         */
+        public Builder autoScaling(boolean enabled) {
+            this.autoScaling = new DefaultAutoScaling(enabled);
+            return this;
+        }
+
+        /**
          * Creates an immutable {@link Ec2Config} from this builder.
          *
          * @return the EC2 configuration
@@ -159,5 +183,23 @@ public class Ec2Config extends AbstractServiceConfig {
         public Ec2Config build() {
             return new Ec2Config(this);
         }
+    }
+
+    /**
+     * Configuration for EC2 Auto Scaling.
+     */
+    public interface AutoScaling {
+        /**
+         * Returns whether Auto Scaling is enabled.
+         *
+         * @return {@code true} if Auto Scaling is enabled
+         */
+        boolean enabled();
+    }
+
+    /**
+     * Default implementation of {@link AutoScaling}.
+     */
+    private record DefaultAutoScaling(boolean enabled) implements AutoScaling {
     }
 }
