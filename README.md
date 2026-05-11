@@ -1,6 +1,6 @@
 # Testcontainers Floci
 
-[![CI](https://github.com/floci-io/testcontainers-floci/actions/workflows/ci.yml/badge.svg)](https://github.com/floci-io/testcontainers-floci/actions/workflows/ci.yml)
+[![CI](https://github.com/floci-io/testcontainers-floci/actions/workflows/ci.yml/badge.svg?branch=releases/1.x)](https://github.com/floci-io/testcontainers-floci/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 [Testcontainers](https://testcontainers.com/) module for [Floci](https://github.com/floci-io/floci) — a free, open-source local AWS emulator.
