@@ -1,5 +1,6 @@
 package io.floci.testcontainers;
 
+import io.floci.testcontainers.config.StorageConfig;
 import io.floci.testcontainers.config.TlsConfig;
 import io.floci.testcontainers.config.services.*;
 import org.slf4j.Logger;
@@ -62,9 +63,8 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     private static final String DEFAULT_ACCESS_KEY = "test";
     private static final String DEFAULT_SECRET_KEY = "test";
 
-    private final Path hostPersistentPath;
-
     private TlsConfig tlsConfig = TlsConfig.builder().build();
+    private StorageConfig storageConfig = StorageConfig.builder().build();
 
     // Services config
     private AcmConfig acmConfig = AcmConfig.builder().build();
@@ -137,16 +137,6 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         super(dockerImageName);
         dockerImageName.assertCompatibleWith(DEFAULT_IMAGE_NAME);
 
-        // Store all persistent data from the containers in a temporary directory on the host, which is
-        // automatically cleaned up after the test run.
-        try {
-            this.hostPersistentPath = Files.createTempDirectory("floci-").toAbsolutePath();
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to create temporary data directory", e);
-        }
-        withFileSystemBind(hostPersistentPath.toString(), "/app/data", BindMode.READ_WRITE);
-        withEnv("FLOCI_STORAGE_HOST_PERSISTENT_PATH", hostPersistentPath.toString());
-
         // Allow creation of child container instances (e.g. for ECS or RDS service)
         withFileSystemBind(DockerClientFactory.instance().getRemoteDockerUnixSocketPath(), DOCKER_SOCKET_PATH);
 
@@ -165,12 +155,14 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     public void stop() {
         super.stop();
 
-        // Cleanup persistent storage
-        try (Stream<Path> paths = Files.walk(hostPersistentPath)) {
-            paths.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-        } catch (IOException e) {
-            // Ignore exception silently
-        }
+        // Cleanup persistent storage if a host path was configured
+        storageConfig.getHostPersistentPath().ifPresent(path -> {
+            try (Stream<Path> paths = Files.walk(path)) {
+                paths.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+            } catch (IOException e) {
+                // Ignore exception silently
+            }
+        });
     }
 
     /**
@@ -339,6 +331,36 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         configurer.accept(builder);
         this.tlsConfig = builder.build();
         tlsConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
+     * Returns the storage configuration.
+     *
+     * @return the storage configuration
+     */
+    public StorageConfig getStorageConfig() {
+        return storageConfig;
+    }
+
+    /**
+     * Configures storage-specific settings.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withStorageConfig(c -> c.pruneVolumesOnDelete(true));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link StorageConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withStorageConfig(Consumer<StorageConfig.Builder> configurer) {
+        StorageConfig.Builder builder = StorageConfig.builder();
+        configurer.accept(builder);
+        this.storageConfig = builder.build();
+        storageConfig.getHostPersistentPath().ifPresent(path ->
+                withFileSystemBind(path.toString(), "/app/data", BindMode.READ_WRITE));
+        storageConfig.applyEnvVarsToContainer(this);
         return this;
     }
 
@@ -1616,6 +1638,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
      */
     private void configureEnvVars() {
         tlsConfig.applyEnvVarsToContainer(this);
+        storageConfig.applyEnvVarsToContainer(this);
 
         // Services config
         acmConfig.applyEnvVarsToContainer(this);
