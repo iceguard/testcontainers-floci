@@ -1,3 +1,26 @@
+# [2.6.0](https://github.com/floci-io/testcontainers-floci/compare/v2.5.0...v2.6.0) (2026-05-12)
+
+
+### Bug Fixes
+
+* Athena tests are working with most recent Floci release and can be activated ([8ff8571](https://github.com/floci-io/testcontainers-floci/commit/8ff8571625a6dde512144b75edc66724493d427e))
+* deactivated failing OpenSearch tests ([900b765](https://github.com/floci-io/testcontainers-floci/commit/900b765086469fd31f34c2231123ffb0ba239119))
+* OpenSearch is not exposing ports as proxy. Adopted configuration accordingly. ([3c54b96](https://github.com/floci-io/testcontainers-floci/commit/3c54b96a65ef0f6958a187c77495107f12d43c5c))
+
+
+### Features
+
+* Add support for config of Backup, Transfer Family, and Route 53 ([c8c6eea](https://github.com/floci-io/testcontainers-floci/commit/c8c6eea68fc4ac5dc23e7decef7466b28bd43a07))
+* Add support for EC2 auto-scaling config ([9cb7c72](https://github.com/floci-io/testcontainers-floci/commit/9cb7c72c345d27eea3aab925fb09858c3bee3186))
+* Add support for Lambda awsConfigPath property ([0495c9e](https://github.com/floci-io/testcontainers-floci/commit/0495c9e456729c17dfd92ead2fb30c05f5730fef))
+* Add support for Textract ([f0a095c](https://github.com/floci-io/testcontainers-floci/commit/f0a095c1fcbd52e255d02cf557909f282ccacd2b))
+* added support for accessing Floci via TLS ([693c8ca](https://github.com/floci-io/testcontainers-floci/commit/693c8ca603c26737e1e85ca55bece5287718228f))
+* added support for EC2 starting up real containers ([4298a60](https://github.com/floci-io/testcontainers-floci/commit/4298a6005cc4441dae832edba4d8dd7a4c11ee56))
+* added support for ELBv2 with forwarding to real load balancer ([8a390a0](https://github.com/floci-io/testcontainers-floci/commit/8a390a039ebb52bb62ab613885401e12228d23d9))
+* use named-volumes as default for data persistence ([008b4f1](https://github.com/floci-io/testcontainers-floci/commit/008b4f10c614b41697c87dc58ef2661b78137e50))
+
+
+
 # [2.5.0](https://github.com/floci-io/testcontainers-floci/compare/v2.4.0...v2.5.0) (2026-04-30)
 
 
@@ -41,20 +64,6 @@
 * added configuration support for default account id and default availability zone ([4739338](https://github.com/floci-io/testcontainers-floci/commit/473933817ce66e102ba9ee26cc040484d4854357))
 * added support for configuring all services supported by Floci that don't startup child containers ([4b4c41f](https://github.com/floci-io/testcontainers-floci/commit/4b4c41f95da3081d8e245cbfe3a28a34c4f2de4a))
 * floci docker image moved ([0203051](https://github.com/floci-io/testcontainers-floci/commit/0203051708671897bf4b010041967efa5a074d2d))
-
-
-
-# [2.1.0](https://github.com/floci-io/testcontainers-floci/compare/v2.0.1...v2.1.0) (2026-04-11)
-
-
-### Features
-
-* added testcases for all services that are available in Floci but were not covered yet ([59fc3bc](https://github.com/floci-io/testcontainers-floci/commit/59fc3bc8f7c9a53a860074b280316126d01858e9))
-* **lambda:** added support for lambdas ([4ec27cd](https://github.com/floci-io/testcontainers-floci/commit/4ec27cd60c7b5905e72d4a1477319752e26a5d09))
-* **logging:** allow configuration of Floci's log level ([1d9fa78](https://github.com/floci-io/testcontainers-floci/commit/1d9fa7863d59a17e1414aef9ebf1c04357d9392b))
-* **network:** added support for creating a dedicated Docker network for Floci and all its child containers ([8bae181](https://github.com/floci-io/testcontainers-floci/commit/8bae181ebdd4ee0c220bd2bae13936d6e0bea90c))
-* **rds:** added support for creating and accessing RDS instances ([366a732](https://github.com/floci-io/testcontainers-floci/commit/366a7329c86d852ed8c5eb3b06ead15731106d2c))
-* use Floci's health check endpoint to consider the container to be started up ([bbbdac4](https://github.com/floci-io/testcontainers-floci/commit/bbbdac4bb8cb344d79c2cc2ed3b4d47705dfd6a3))
 
 
 
