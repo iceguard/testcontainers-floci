@@ -5,8 +5,8 @@
 
 [Testcontainers](https://testcontainers.com/) module for [Floci](https://github.com/floci-io/floci) — a free, open-source local AWS emulator.
 
-Floci provides a single Docker container that emulates many AWS services (like S3, SQS, DynamoDB, Lambda, and more) on 
-a single endpoint, making it ideal for integration testing.
+Floci provides a single Docker container that emulates many AWS services (like S3, SQS, DynamoDB, Lambda, and more) on
+a single endpoint, making it ideal for integration testing. See the [Floci documentation](https://floci.io/floci/services/) for the full list of supported services.
 
 ## Modules
 
@@ -56,7 +56,7 @@ testImplementation("io.floci:testcontainers-floci:${testcontainersFlociVersion}"
 **Gradle (Groovy DSL):**
 
 ```groovy
-testImplementation 'io.floci:testcontainers-floci:${testcontainersFlociVersion}'
+testImplementation "io.floci:testcontainers-floci:${testcontainersFlociVersion}"
 ```
 
 ### Usage
@@ -157,8 +157,8 @@ class S3IntegrationTest {
 | `withLogLevel(Level)`                 | Sets the Floci log level (`TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`)                                           |
 | `withDedicatedNetwork()`              | Creates a dedicated Docker network shared by Floci and its sibling containers (RDS, Lambda, ElastiCache, etc.) |
 | `withTlsConfig(...)`                  | Configures TLS/HTTPS (self-signed by default; optionally provide cert/key paths)                               |
-| `withStorageConfig(...)`              | Configures storage-specific settings (e.g. prune volumes on resource delete)                                   |
-| `with*Config(...)`                    | Configures service-specific settings (see [Supported Services](#supported-services))                           |
+| `withStorageConfig(...)`              | Configures persistent storage and volume behaviour                                                             |
+| `with*Config(...)`                    | Configures service-specific settings                                                                           |
 
 Each AWS service emulated by Floci can be individually configured via a `with*Config(...)` method on
 `FlociContainer`. Every service configuration supports at least an `enabled(boolean)` flag to enable or
@@ -236,7 +236,7 @@ testImplementation("io.awspring.cloud:spring-cloud-aws-starter-s3")
 **Gradle (Groovy DSL):**
 
 ```groovy
-testImplementation 'io.floci:spring-boot-testcontainers-floci:${testcontainersFlociVersion}'
+testImplementation "io.floci:spring-boot-testcontainers-floci:${testcontainersFlociVersion}"
 testImplementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
 ```
 
