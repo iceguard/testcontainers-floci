@@ -240,4 +240,212 @@ class FlociContainerServicesConfigTest {
             assertThat(container.getPricingConfig().getSnapshotPath()).contains("/data/pricing");
         }
     }
+
+    @Test
+    void shouldStoreAthenaConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withAthenaConfig(c -> c
+                    .mock(true)
+                    .defaultImage("floci/floci-duck:custom"));
+
+            assertThat(container.getAthenaConfig().isMock()).isTrue();
+            assertThat(container.getAthenaConfig().getDefaultImage()).isEqualTo("floci/floci-duck:custom");
+        }
+    }
+
+    @Test
+    void shouldStoreBackupConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withBackupConfig(c -> c.jobCompletionDelaySeconds(5));
+
+            assertThat(container.getBackupConfig().getJobCompletionDelaySeconds()).isEqualTo(5);
+        }
+    }
+
+    @Test
+    void shouldStoreBedrockRuntimeConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withBedrockRuntimeConfig(c -> c.enabled(false));
+
+            assertThat(container.getBedrockRuntimeConfig().isEnabled()).isFalse();
+        }
+    }
+
+    @Test
+    void shouldStoreCodeBuildConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withCodeBuildConfig(c -> c.dockerNetwork("my-network"));
+
+            assertThat(container.getCodeBuildConfig().getDockerNetwork()).isEqualTo("my-network");
+        }
+    }
+
+    @Test
+    void shouldStoreCodeDeployConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withCodeDeployConfig(c -> c.enabled(false));
+
+            assertThat(container.getCodeDeployConfig().isEnabled()).isFalse();
+        }
+    }
+
+    @Test
+    void shouldStoreEcrConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withEcrConfig(c -> c
+                    .registryPortRange(5200, 5)
+                    .registryImage("registry:3"));
+
+            assertThat(container.getEcrConfig().getRegistryBasePort()).isEqualTo(5200);
+            assertThat(container.getEcrConfig().getRegistryPortsCount()).isEqualTo(5);
+            assertThat(container.getEcrConfig().getRegistryImage()).isEqualTo("registry:3");
+        }
+    }
+
+    @Test
+    void shouldStoreEcsConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withEcsConfig(c -> c
+                    .mock(true)
+                    .defaultMemoryMb(1024));
+
+            assertThat(container.getEcsConfig().isMock()).isTrue();
+            assertThat(container.getEcsConfig().getDefaultMemoryMb()).isEqualTo(1024);
+        }
+    }
+
+    @Test
+    void shouldStoreEksConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withEksConfig(c -> c
+                    .mock(true)
+                    .apiServerPortRange(6600, 5));
+
+            assertThat(container.getEksConfig().isMock()).isTrue();
+            assertThat(container.getEksConfig().getApiServerBasePort()).isEqualTo(6600);
+            assertThat(container.getEksConfig().getApiServerPortsCount()).isEqualTo(5);
+        }
+    }
+
+    @Test
+    void shouldStoreElastiCacheConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withElastiCacheConfig(c -> c
+                    .proxyPortRange(7000, 5)
+                    .defaultImage("valkey/valkey:9"));
+
+            assertThat(container.getElastiCacheConfig().getProxyBasePort()).isEqualTo(7000);
+            assertThat(container.getElastiCacheConfig().getProxyPortsCount()).isEqualTo(5);
+            assertThat(container.getElastiCacheConfig().getDefaultImage()).isEqualTo("valkey/valkey:9");
+        }
+    }
+
+    @Test
+    void shouldStoreElbV2ConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withElbV2Config(c -> c
+                    .mock(true)
+                    .listenerPort(8080));
+
+            assertThat(container.getElbV2Config().isMock()).isTrue();
+            assertThat(container.getElbV2Config().getListenerPorts()).containsExactly(8080);
+        }
+    }
+
+    @Test
+    void shouldStoreFirehoseConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withFirehoseConfig(c -> c.enabled(false));
+
+            assertThat(container.getFirehoseConfig().isEnabled()).isFalse();
+        }
+    }
+
+    @Test
+    void shouldStoreGlueConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withGlueConfig(c -> c.enabled(false));
+
+            assertThat(container.getGlueConfig().isEnabled()).isFalse();
+        }
+    }
+
+    @Test
+    void shouldStoreMskConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withMskConfig(c -> c
+                    .mock(true)
+                    .defaultImage("redpandadata/redpanda:v24"));
+
+            assertThat(container.getMskConfig().isMock()).isTrue();
+            assertThat(container.getMskConfig().getDefaultImage()).isEqualTo("redpandadata/redpanda:v24");
+        }
+    }
+
+    @Test
+    void shouldStoreOpenSearchConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withOpenSearchConfig(c -> c
+                    .mock(true)
+                    .proxyPortRange(9500, 5));
+
+            assertThat(container.getOpenSearchConfig().isMock()).isTrue();
+            assertThat(container.getOpenSearchConfig().getProxyBasePort()).isEqualTo(9500);
+            assertThat(container.getOpenSearchConfig().getProxyPortsCount()).isEqualTo(5);
+        }
+    }
+
+    @Test
+    void shouldStorePipesConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withPipesConfig(c -> c.enabled(false));
+
+            assertThat(container.getPipesConfig().isEnabled()).isFalse();
+        }
+    }
+
+    @Test
+    void shouldStoreResourceGroupsTaggingConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withResourceGroupsTaggingConfig(c -> c.enabled(false));
+
+            assertThat(container.getResourceGroupsTaggingConfig().isEnabled()).isFalse();
+        }
+    }
+
+    @Test
+    void shouldStoreRoute53ConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withRoute53Config(c -> c.defaultNameserver1("ns1.example.com"));
+
+            assertThat(container.getRoute53Config().getDefaultNameserver1()).isEqualTo("ns1.example.com");
+        }
+    }
+
+    @Test
+    void shouldStoreStepFunctionsConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withStepFunctionsConfig(c -> c.enabled(false));
+
+            assertThat(container.getStepFunctionsConfig().isEnabled()).isFalse();
+        }
+    }
+
+    @Test
+    void shouldStoreTextractConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withTextractConfig(c -> c.enabled(false));
+
+            assertThat(container.getTextractConfig().isEnabled()).isFalse();
+        }
+    }
+
+    @Test
+    void shouldStoreTransferFamilyConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withTransferFamilyConfig(c -> c.enabled(false));
+
+            assertThat(container.getTransferFamilyConfig().isEnabled()).isFalse();
+        }
+    }
 }
