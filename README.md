@@ -346,17 +346,10 @@ class FlociTestConfig {
 
 ---
 
-## Conventional Commits
+## Contributing
 
-This project uses [Conventional Commits](https://www.conventionalcommits.org/). Commit messages determine the release 
-version automatically:
-
-| Prefix                          | Version bump          | Example                                     |
-|---------------------------------|-----------------------|---------------------------------------------|
-| `fix:`                          | Patch (0.1.0 → 0.1.1) | `fix: handle null region gracefully`        |
-| `feat:`                         | Minor (0.1.0 → 0.2.0) | `feat: add withServices() configuration`    |
-| `feat!:` or `BREAKING CHANGE:`  | Major (0.1.0 → 1.0.0) | `feat!: use next Spring Boot major version` |
-| `chore:`, `docs:`, `ci:`        | No release            | `docs: update README examples`              |
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for how to get started, how to run the tests, the
+branching model, and commit message conventions.
 
 ## License
 
