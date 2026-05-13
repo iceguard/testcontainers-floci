@@ -231,4 +231,13 @@ class FlociContainerServicesConfigTest {
             assertThat(container.getSsmConfig().getMaxParameterHistory()).isEqualTo(10);
         }
     }
+
+    @Test
+    void shouldStorePricingConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withPricingConfig(c -> c.snapshotPath("/data/pricing"));
+
+            assertThat(container.getPricingConfig().getSnapshotPath()).contains("/data/pricing");
+        }
+    }
 }

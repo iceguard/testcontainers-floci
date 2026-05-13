@@ -111,6 +111,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     private TransferFamilyConfig transferFamilyConfig = TransferFamilyConfig.builder().build();
     private Route53Config route53Config = Route53Config.builder().build();
     private TextractConfig textractConfig = TextractConfig.builder().build();
+    private PricingConfig pricingConfig = PricingConfig.builder().build();
 
     /**
      * Creates a new Floci container with the default image ({@code floci/floci:latest}).
@@ -1618,6 +1619,34 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     }
 
     /**
+     * Pricing-specific settings such as an optional snapshot path override.
+     *
+     * @return the Pricing configuration
+     */
+    public PricingConfig getPricingConfig() {
+        return pricingConfig;
+    }
+
+    /**
+     * Configures Pricing-specific settings such as an optional snapshot path override.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withPricingConfig(c -> c.snapshotPath("/data/pricing"));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link PricingConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withPricingConfig(Consumer<PricingConfig.Builder> configurer) {
+        PricingConfig.Builder builder = PricingConfig.builder();
+        configurer.accept(builder);
+        this.pricingConfig = builder.build();
+        pricingConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
      * Configures all exposed ports of the Floci container
      */
     private void configureExposedPorts() {
@@ -1685,6 +1714,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         transferFamilyConfig.applyEnvVarsToContainer(this);
         route53Config.applyEnvVarsToContainer(this);
         textractConfig.applyEnvVarsToContainer(this);
+        pricingConfig.applyEnvVarsToContainer(this);
     }
 
     private static String uniqueShortId() {
