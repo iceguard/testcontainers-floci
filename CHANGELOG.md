@@ -1,3 +1,13 @@
+# [2.7.0](https://github.com/floci-io/testcontainers-floci/compare/v2.6.0...v2.7.0) (2026-05-15)
+
+
+### Features
+
+* add missing tests for various FlociContainer service configs ([28d4138](https://github.com/floci-io/testcontainers-floci/commit/28d413878fc06bf056362b344210423bb33f527b))
+* added support for Pricing Service ([368d59f](https://github.com/floci-io/testcontainers-floci/commit/368d59f69dc90b482856c6776638845445da38e4))
+
+
+
 # [2.6.0](https://github.com/floci-io/testcontainers-floci/compare/v2.5.0...v2.6.0) (2026-05-12)
 
 
@@ -53,17 +63,6 @@
 ### Features
 
 * added support for ElastiCache, OpenSearch, ECS and ECR. ([0f5c31a](https://github.com/floci-io/testcontainers-floci/commit/0f5c31ad6760896ef0a382c3567be62465b13123))
-
-
-
-# [2.2.0](https://github.com/floci-io/testcontainers-floci/compare/v2.1.0...v2.2.0) (2026-04-23)
-
-
-### Features
-
-* added configuration support for default account id and default availability zone ([4739338](https://github.com/floci-io/testcontainers-floci/commit/473933817ce66e102ba9ee26cc040484d4854357))
-* added support for configuring all services supported by Floci that don't startup child containers ([4b4c41f](https://github.com/floci-io/testcontainers-floci/commit/4b4c41f95da3081d8e245cbfe3a28a34c4f2de4a))
-* floci docker image moved ([0203051](https://github.com/floci-io/testcontainers-floci/commit/0203051708671897bf4b010041967efa5a074d2d))
 
 
 
