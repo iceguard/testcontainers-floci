@@ -1,7 +1,6 @@
 package io.floci.testcontainers.services;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.pricing.PricingClient;
 import software.amazon.awssdk.services.pricing.model.DescribeServicesRequest;
@@ -12,7 +11,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Disabled
 class PricingServiceTest extends AbstractServiceTest {
 
     static PricingClient pricing;
