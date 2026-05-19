@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Configuration;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import software.amazon.awssdk.services.s3.S3Client;
+import io.awspring.cloud.autoconfigure.core.AwsConnectionDetails;
+import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,6 +22,9 @@ class FlociAutoConfigurationTest {
     @Container
     @ServiceConnection
     static FlociContainer flociContainer = new FlociContainer();
+    
+    @Autowired
+    private AwsConnectionDetails awsConnectionDetails;
 
     @Autowired
     private S3Client s3Client;
@@ -31,6 +36,18 @@ class FlociAutoConfigurationTest {
 
         var buckets = s3Client.listBuckets().buckets();
         assertThat(buckets).anyMatch(b -> b.name().equals(bucketName));
+    }
+    
+    @Test
+    void shouldExposeFlociAwsConnectionDetails() {
+        assertThat(awsConnectionDetails.getEndpoint())
+                .isEqualTo(URI.create(flociContainer.getEndpoint()));
+        assertThat(awsConnectionDetails.getRegion())
+                .isEqualTo(flociContainer.getRegion());
+        assertThat(awsConnectionDetails.getAccessKey())
+                .isEqualTo(flociContainer.getAccessKey());
+        assertThat(awsConnectionDetails.getSecretKey())
+                .isEqualTo(flociContainer.getSecretKey());
     }
 
     @Configuration
