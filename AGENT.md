@@ -29,3 +29,5 @@ Requires Docker running for integration tests.
 - Use conventional commits (`feat:`, `fix:`, `chore:`, etc.)
 - Tests use a shared singleton `FlociContainer` via `AbstractFlociContainerServiceTest`
 - Spring Boot auto-config registered in `spring.factories` and `AutoConfiguration.imports`
+- CONTRIBUTING.md gives some details about contribution guidelines that should be followed when contributing 
+  to the project.
