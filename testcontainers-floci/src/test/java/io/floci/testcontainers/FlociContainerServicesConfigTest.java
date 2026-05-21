@@ -262,12 +262,9 @@ class FlociContainerServicesConfigTest {
     @Test
     void shouldStoreAthenaConfigOnContainer() {
         try (FlociContainer container = new FlociContainer()) {
-            container.withAthenaConfig(c -> c
-                    .mock(true)
-                    .defaultImage("floci/floci-duck:custom"));
+            container.withAthenaConfig(c -> c.mock(true));
 
             assertThat(container.getAthenaConfig().isMock()).isTrue();
-            assertThat(container.getAthenaConfig().getDefaultImage()).isEqualTo("floci/floci-duck:custom");
         }
     }
 
@@ -508,6 +505,18 @@ class FlociContainerServicesConfigTest {
             container.withBcmDataExportsConfig(c -> c.emitMode("off"));
 
             assertThat(container.getBcmDataExportsConfig().getEmitMode()).isEqualTo("off");
+        }
+    }
+
+    @Test
+    void shouldStoreDuckDbConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withDuckDbConfig(c -> c
+                    .url("http://custom-duckdb:8080")
+                    .defaultImage("floci/floci-duck:1.5.18"));
+
+            assertThat(container.getDuckDbConfig().getUrl()).isEqualTo("http://custom-duckdb:8080");
+            assertThat(container.getDuckDbConfig().getDefaultImage()).isEqualTo("floci/floci-duck:1.5.18");
         }
     }
 }

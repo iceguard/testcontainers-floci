@@ -1,5 +1,6 @@
 package io.floci.testcontainers;
 
+import io.floci.testcontainers.config.DuckDbConfig;
 import io.floci.testcontainers.config.StorageConfig;
 import io.floci.testcontainers.config.TlsConfig;
 import io.floci.testcontainers.config.services.*;
@@ -65,6 +66,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
 
     private TlsConfig tlsConfig = TlsConfig.builder().build();
     private StorageConfig storageConfig = StorageConfig.builder().build();
+    private DuckDbConfig duckDbConfig = DuckDbConfig.builder().build();
 
     // Services config
     private AcmConfig acmConfig = AcmConfig.builder().build();
@@ -1824,6 +1826,36 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     }
 
     /**
+     * Returns the current DuckDB configuration. Defaults to the default image and no custom URL.
+     *
+     * @return the DuckDB configuration
+     */
+    public DuckDbConfig getDuckDbConfig() {
+        return duckDbConfig;
+    }
+
+    /**
+     * Configures DuckDB-specific settings such as custom URL or default image.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withDuckDbConfig(c -> c
+     *         .url("http://duckdb:8080")
+     *         .defaultImage("floci/floci-duck:1.5.18"));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link DuckDbConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withDuckDbConfig(Consumer<DuckDbConfig.Builder> configurer) {
+        DuckDbConfig.Builder builder = DuckDbConfig.builder();
+        configurer.accept(builder);
+        this.duckDbConfig = builder.build();
+        duckDbConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
      * Configures all exposed ports of the Floci container
      */
     private void configureExposedPorts() {
@@ -1846,6 +1878,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     private void configureEnvVars() {
         tlsConfig.applyEnvVarsToContainer(this);
         storageConfig.applyEnvVarsToContainer(this);
+        duckDbConfig.applyEnvVarsToContainer(this);
 
         // Services config
         acmConfig.applyEnvVarsToContainer(this);
