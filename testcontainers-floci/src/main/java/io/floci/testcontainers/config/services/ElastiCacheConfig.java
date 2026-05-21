@@ -19,10 +19,12 @@ public class ElastiCacheConfig extends AbstractServiceConfig {
     private static final int DEFAULT_PROXY_BASE_PORT = 6379;
     private static final int DEFAULT_PROXY_PORTS_COUNT = 10;
     private static final String DEFAULT_IMAGE = "valkey/valkey:8";
+    private static final String DEFAULT_MEMCACHED_IMAGE = "memcached:1.6";
 
     private final int proxyBasePort;
     private final int proxyPortsCount;
     private final String defaultImage;
+    private final String defaultMemcachedImage;
     private final String dockerNetwork;
 
     private ElastiCacheConfig(Builder builder) {
@@ -30,6 +32,7 @@ public class ElastiCacheConfig extends AbstractServiceConfig {
         this.proxyBasePort = builder.proxyBasePort;
         this.proxyPortsCount = builder.proxyPortsCount;
         this.defaultImage = builder.defaultImage;
+        this.defaultMemcachedImage = builder.defaultMemcachedImage;
         this.dockerNetwork = builder.dockerNetwork;
     }
 
@@ -74,6 +77,15 @@ public class ElastiCacheConfig extends AbstractServiceConfig {
     }
 
     /**
+     * Returns the default Docker image used for Memcached instances.
+     *
+     * @return the Memcached image name (default {@value DEFAULT_MEMCACHED_IMAGE})
+     */
+    public String getDefaultMemcachedImage() {
+        return defaultMemcachedImage;
+    }
+
+    /**
      * Returns the Docker network used for ElastiCache containers, or {@code null} if not set.
      *
      * @return the Docker network name, or {@code null}
@@ -90,6 +102,7 @@ public class ElastiCacheConfig extends AbstractServiceConfig {
             container.withEnv("FLOCI_SERVICES_ELASTICACHE_PROXY_BASE_PORT", String.valueOf(proxyBasePort));
             container.withEnv("FLOCI_SERVICES_ELASTICACHE_PROXY_MAX_PORT", String.valueOf(getProxyMaxPort()));
             container.withEnv("FLOCI_SERVICES_ELASTICACHE_DEFAULT_IMAGE", defaultImage);
+            container.withEnv("FLOCI_SERVICES_ELASTICACHE_DEFAULT_MEMCACHED_IMAGE", defaultMemcachedImage);
 
             if (dockerNetwork != null) {
                 container.withEnv("FLOCI_SERVICES_ELASTICACHE_DOCKER_NETWORK", dockerNetwork);
@@ -115,6 +128,7 @@ public class ElastiCacheConfig extends AbstractServiceConfig {
         private int proxyBasePort = DEFAULT_PROXY_BASE_PORT;
         private int proxyPortsCount = DEFAULT_PROXY_PORTS_COUNT;
         private String defaultImage = DEFAULT_IMAGE;
+        private String defaultMemcachedImage = DEFAULT_MEMCACHED_IMAGE;
         private String dockerNetwork;
 
         private Builder() {
@@ -153,6 +167,17 @@ public class ElastiCacheConfig extends AbstractServiceConfig {
          */
         public Builder defaultImage(String defaultImage) {
             this.defaultImage = defaultImage;
+            return this;
+        }
+
+        /**
+         * Sets the default Docker image for Memcached instances.
+         *
+         * @param defaultMemcachedImage the Memcached image name (default {@value DEFAULT_MEMCACHED_IMAGE})
+         * @return this builder
+         */
+        public Builder defaultMemcachedImage(String defaultMemcachedImage) {
+            this.defaultMemcachedImage = defaultMemcachedImage;
             return this;
         }
 
