@@ -104,13 +104,13 @@ class Ec2ServiceTest extends AbstractServiceTest {
                 .instances().get(0).instanceId();
 
         await().atMost(Duration.ofMinutes(5))
-                .pollInterval(Duration.ofSeconds(1))
+                .pollInterval(Duration.ofSeconds(2))
                 .until(() -> ec2.describeInstances(b -> b.instanceIds(instanceId))
                         .reservations().get(0).instances().get(0).state().name() == InstanceStateName.RUNNING);
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     void shouldConnectViaSsh() throws Exception {
         assertThat(instanceId).as("instance must have been created by previous test").isNotBlank();
 
@@ -138,7 +138,7 @@ class Ec2ServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     void shouldTerminateInstance() {
         assertThat(instanceId).as("instance must have been created by previous test").isNotBlank();
 
