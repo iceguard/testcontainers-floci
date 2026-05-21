@@ -3,36 +3,33 @@ package io.floci.testcontainers.config.services;
 import org.testcontainers.containers.Container;
 
 /**
- * Configuration for ElastiCache-specific container settings.
+ * Configuration for Neptune-specific container settings.
  *
  * <p>Instances are created via {@link Builder}:
  * <pre>{@code
- * ElastiCacheConfig config = ElastiCacheConfig.builder()
+ * NeptuneConfig config = NeptuneConfig.builder()
  *     .enabled(true)
- *     .proxyPortRange(6379, 20)
- *     .defaultImage("valkey/valkey:8")
+ *     .proxyPortRange(8182, 101)
+ *     .defaultImage("tinkerpop/gremlin-server:3.7.3")
  *     .build();
  * }</pre>
  */
-public class ElastiCacheConfig extends AbstractServiceConfig {
+public class NeptuneConfig extends AbstractServiceConfig {
 
-    private static final int DEFAULT_PROXY_BASE_PORT = 6379;
-    private static final int DEFAULT_PROXY_PORTS_COUNT = 10;
-    private static final String DEFAULT_IMAGE = "valkey/valkey:8";
-    private static final String DEFAULT_MEMCACHED_IMAGE = "memcached:1.6";
+    private static final int DEFAULT_PROXY_BASE_PORT = 8182;
+    private static final int DEFAULT_PROXY_PORTS_COUNT = 101;
+    private static final String DEFAULT_IMAGE = "tinkerpop/gremlin-server:3.7.3";
 
     private final int proxyBasePort;
     private final int proxyPortsCount;
     private final String defaultImage;
-    private final String defaultMemcachedImage;
     private final String dockerNetwork;
 
-    private ElastiCacheConfig(Builder builder) {
+    private NeptuneConfig(Builder builder) {
         super(builder.enabled);
         this.proxyBasePort = builder.proxyBasePort;
         this.proxyPortsCount = builder.proxyPortsCount;
         this.defaultImage = builder.defaultImage;
-        this.defaultMemcachedImage = builder.defaultMemcachedImage;
         this.dockerNetwork = builder.dockerNetwork;
     }
 
@@ -41,7 +38,7 @@ public class ElastiCacheConfig extends AbstractServiceConfig {
     }
 
     /**
-     * Returns the base port for the ElastiCache proxy port range.
+     * Returns the base port for the Neptune proxy port range.
      *
      * @return the base port
      */
@@ -50,7 +47,7 @@ public class ElastiCacheConfig extends AbstractServiceConfig {
     }
 
     /**
-     * Returns the number of ports allocated for the ElastiCache proxy, starting from {@link #getProxyBasePort()}.
+     * Returns the number of ports allocated for the Neptune proxy, starting from {@link #getProxyBasePort()}.
      *
      * @return the number of proxy ports
      */
@@ -59,7 +56,7 @@ public class ElastiCacheConfig extends AbstractServiceConfig {
     }
 
     /**
-     * Returns the maximum port for the ElastiCache proxy port range.
+     * Returns the inclusive upper bound of the Neptune proxy port range.
      *
      * @return the maximum port
      */
@@ -68,7 +65,7 @@ public class ElastiCacheConfig extends AbstractServiceConfig {
     }
 
     /**
-     * Returns the default Docker image used for ElastiCache (Valkey) instances.
+     * Returns the default Docker image used for Neptune (Gremlin Server) instances.
      *
      * @return the image name
      */
@@ -77,16 +74,7 @@ public class ElastiCacheConfig extends AbstractServiceConfig {
     }
 
     /**
-     * Returns the default Docker image used for Memcached instances.
-     *
-     * @return the Memcached image name (default {@value DEFAULT_MEMCACHED_IMAGE})
-     */
-    public String getDefaultMemcachedImage() {
-        return defaultMemcachedImage;
-    }
-
-    /**
-     * Returns the Docker network used for ElastiCache containers, or {@code null} if not set.
+     * Returns the Docker network used for Neptune containers, or {@code null} if not set.
      *
      * @return the Docker network name, or {@code null}
      */
@@ -96,16 +84,15 @@ public class ElastiCacheConfig extends AbstractServiceConfig {
 
     @Override
     public void applyEnvVarsToContainer(Container<?> container) {
-        container.withEnv("FLOCI_SERVICES_ELASTICACHE_ENABLED", String.valueOf(isEnabled()));
+        container.withEnv("FLOCI_SERVICES_NEPTUNE_ENABLED", String.valueOf(isEnabled()));
 
         if (isEnabled()) {
-            container.withEnv("FLOCI_SERVICES_ELASTICACHE_PROXY_BASE_PORT", String.valueOf(proxyBasePort));
-            container.withEnv("FLOCI_SERVICES_ELASTICACHE_PROXY_MAX_PORT", String.valueOf(getProxyMaxPort()));
-            container.withEnv("FLOCI_SERVICES_ELASTICACHE_DEFAULT_IMAGE", defaultImage);
-            container.withEnv("FLOCI_SERVICES_ELASTICACHE_DEFAULT_MEMCACHED_IMAGE", defaultMemcachedImage);
+            container.withEnv("FLOCI_SERVICES_NEPTUNE_PROXY_BASE_PORT", String.valueOf(proxyBasePort));
+            container.withEnv("FLOCI_SERVICES_NEPTUNE_PROXY_MAX_PORT", String.valueOf(getProxyMaxPort()));
+            container.withEnv("FLOCI_SERVICES_NEPTUNE_DEFAULT_IMAGE", defaultImage);
 
             if (dockerNetwork != null) {
-                container.withEnv("FLOCI_SERVICES_ELASTICACHE_DOCKER_NETWORK", dockerNetwork);
+                container.withEnv("FLOCI_SERVICES_NEPTUNE_DOCKER_NETWORK", dockerNetwork);
             }
         }
     }
@@ -120,7 +107,7 @@ public class ElastiCacheConfig extends AbstractServiceConfig {
     }
 
     /**
-     * Builder for {@link ElastiCacheConfig}.
+     * Builder for {@link NeptuneConfig}.
      */
     public static class Builder {
 
@@ -128,15 +115,14 @@ public class ElastiCacheConfig extends AbstractServiceConfig {
         private int proxyBasePort = DEFAULT_PROXY_BASE_PORT;
         private int proxyPortsCount = DEFAULT_PROXY_PORTS_COUNT;
         private String defaultImage = DEFAULT_IMAGE;
-        private String defaultMemcachedImage = DEFAULT_MEMCACHED_IMAGE;
         private String dockerNetwork;
 
         private Builder() {
-            // Allow instantiation only via ElastiCacheConfig.builder()
+            // Allow instantiation only via NeptuneConfig.builder()
         }
 
         /**
-         * Enables or disables the ElastiCache service.
+         * Enables or disables the Neptune service.
          *
          * @param enabled {@code true} to enable (default {@value DEFAULT_ENABLED})
          * @return this builder
@@ -147,7 +133,7 @@ public class ElastiCacheConfig extends AbstractServiceConfig {
         }
 
         /**
-         * Sets the port range for the ElastiCache proxy.
+         * Sets the port range for the Neptune proxy.
          *
          * @param basePort the base port (default {@value DEFAULT_PROXY_BASE_PORT})
          * @param amount   the amount of ports (default {@value DEFAULT_PROXY_PORTS_COUNT})
@@ -160,7 +146,7 @@ public class ElastiCacheConfig extends AbstractServiceConfig {
         }
 
         /**
-         * Sets the default Docker image for ElastiCache (Valkey) instances.
+         * Sets the default Docker image for Neptune (Gremlin Server) instances.
          *
          * @param defaultImage the image name (default {@value DEFAULT_IMAGE})
          * @return this builder
@@ -171,18 +157,7 @@ public class ElastiCacheConfig extends AbstractServiceConfig {
         }
 
         /**
-         * Sets the default Docker image for Memcached instances.
-         *
-         * @param defaultMemcachedImage the Memcached image name (default {@value DEFAULT_MEMCACHED_IMAGE})
-         * @return this builder
-         */
-        public Builder defaultMemcachedImage(String defaultMemcachedImage) {
-            this.defaultMemcachedImage = defaultMemcachedImage;
-            return this;
-        }
-
-        /**
-         * Sets the Docker network that ElastiCache containers should join.
+         * Sets the Docker network that Neptune containers should join.
          *
          * @param dockerNetwork the network name, or {@code null} to use the default bridge
          * @return this builder
@@ -193,12 +168,12 @@ public class ElastiCacheConfig extends AbstractServiceConfig {
         }
 
         /**
-         * Creates an immutable {@link ElastiCacheConfig} from this builder.
+         * Creates an immutable {@link NeptuneConfig} from this builder.
          *
-         * @return the ElastiCache configuration
+         * @return the Neptune configuration
          */
-        public ElastiCacheConfig build() {
-            return new ElastiCacheConfig(this);
+        public NeptuneConfig build() {
+            return new NeptuneConfig(this);
         }
     }
 }

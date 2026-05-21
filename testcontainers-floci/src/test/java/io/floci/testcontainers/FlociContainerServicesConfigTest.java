@@ -61,6 +61,15 @@ class FlociContainerServicesConfigTest {
     }
 
     @Test
+    void shouldStoreCloudFrontConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withCloudFrontConfig(c -> c.domainSuffix("example.cloudfront.net"));
+
+            assertThat(container.getCloudFrontConfig().getDomainSuffix()).isEqualTo("example.cloudfront.net");
+        }
+    }
+
+    @Test
     void shouldStoreCloudWatchLogsConfigOnContainer() {
         try (FlociContainer container = new FlociContainer()) {
             container.withCloudWatchLogsConfig(c -> c.maxEventsPerQuery(5000));
@@ -84,6 +93,15 @@ class FlociContainerServicesConfigTest {
             container.withCognitoConfig(c -> c.enabled(false));
 
             assertThat(container.getCognitoConfig().isEnabled()).isFalse();
+        }
+    }
+
+    @Test
+    void shouldStoreConfigServiceConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withConfigServiceConfig(c -> c.enabled(false));
+
+            assertThat(container.getConfigServiceConfig().isEnabled()).isFalse();
         }
     }
 
@@ -244,12 +262,9 @@ class FlociContainerServicesConfigTest {
     @Test
     void shouldStoreAthenaConfigOnContainer() {
         try (FlociContainer container = new FlociContainer()) {
-            container.withAthenaConfig(c -> c
-                    .mock(true)
-                    .defaultImage("floci/floci-duck:custom"));
+            container.withAthenaConfig(c -> c.mock(true));
 
             assertThat(container.getAthenaConfig().isMock()).isTrue();
-            assertThat(container.getAthenaConfig().getDefaultImage()).isEqualTo("floci/floci-duck:custom");
         }
     }
 
@@ -446,6 +461,62 @@ class FlociContainerServicesConfigTest {
             container.withTransferFamilyConfig(c -> c.enabled(false));
 
             assertThat(container.getTransferFamilyConfig().isEnabled()).isFalse();
+        }
+    }
+
+    @Test
+    void shouldStoreNeptuneConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withNeptuneConfig(c -> c
+                    .proxyPortRange(9000, 51)
+                    .defaultImage("tinkerpop/gremlin-server:3.8.0"));
+
+            assertThat(container.getNeptuneConfig().getProxyBasePort()).isEqualTo(9000);
+            assertThat(container.getNeptuneConfig().getProxyPortsCount()).isEqualTo(51);
+            assertThat(container.getNeptuneConfig().getProxyMaxPort()).isEqualTo(9050);
+            assertThat(container.getNeptuneConfig().getDefaultImage()).isEqualTo("tinkerpop/gremlin-server:3.8.0");
+        }
+    }
+
+    @Test
+    void shouldStoreCostExplorerConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withCostExplorerConfig(c -> c.creditUsdMonthly(250.0));
+
+            assertThat(container.getCostExplorerConfig().getCreditUsdMonthly()).isEqualTo(250.0);
+        }
+    }
+
+    @Test
+    void shouldStoreCurConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withCurConfig(c -> c
+                    .emitMode("daily")
+                    .stagingBucket("my-staging"));
+
+            assertThat(container.getCurConfig().getEmitMode()).isEqualTo("daily");
+            assertThat(container.getCurConfig().getStagingBucket()).isEqualTo("my-staging");
+        }
+    }
+
+    @Test
+    void shouldStoreBcmDataExportsConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withBcmDataExportsConfig(c -> c.emitMode("off"));
+
+            assertThat(container.getBcmDataExportsConfig().getEmitMode()).isEqualTo("off");
+        }
+    }
+
+    @Test
+    void shouldStoreDuckDbConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withDuckDbConfig(c -> c
+                    .url("http://custom-duckdb:8080")
+                    .defaultImage("floci/floci-duck:1.5.18"));
+
+            assertThat(container.getDuckDbConfig().getUrl()).isEqualTo("http://custom-duckdb:8080");
+            assertThat(container.getDuckDbConfig().getDefaultImage()).isEqualTo("floci/floci-duck:1.5.18");
         }
     }
 }

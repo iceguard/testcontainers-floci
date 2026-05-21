@@ -1,5 +1,6 @@
 package io.floci.testcontainers;
 
+import io.floci.testcontainers.config.DuckDbConfig;
 import io.floci.testcontainers.config.StorageConfig;
 import io.floci.testcontainers.config.TlsConfig;
 import io.floci.testcontainers.config.services.*;
@@ -65,6 +66,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
 
     private TlsConfig tlsConfig = TlsConfig.builder().build();
     private StorageConfig storageConfig = StorageConfig.builder().build();
+    private DuckDbConfig duckDbConfig = DuckDbConfig.builder().build();
 
     // Services config
     private AcmConfig acmConfig = AcmConfig.builder().build();
@@ -73,9 +75,11 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     private AppConfigConfig appConfigConfig = AppConfigConfig.builder().build();
     private AppConfigDataConfig appConfigDataConfig = AppConfigDataConfig.builder().build();
     private CloudFormationConfig cloudFormationConfig = CloudFormationConfig.builder().build();
+    private CloudFrontConfig cloudFrontConfig = CloudFrontConfig.builder().build();
     private CloudWatchLogsConfig cloudWatchLogsConfig = CloudWatchLogsConfig.builder().build();
     private CloudWatchMetricsConfig cloudWatchMetricsConfig = CloudWatchMetricsConfig.builder().build();
     private CognitoConfig cognitoConfig = CognitoConfig.builder().build();
+    private ConfigServiceConfig configServiceConfig = ConfigServiceConfig.builder().build();
     private DynamoDbConfig dynamoDbConfig = DynamoDbConfig.builder().build();
     private Ec2Config ec2Config = Ec2Config.builder().build();
     private EcrConfig ecrConfig = EcrConfig.builder().build();
@@ -112,6 +116,10 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     private Route53Config route53Config = Route53Config.builder().build();
     private TextractConfig textractConfig = TextractConfig.builder().build();
     private PricingConfig pricingConfig = PricingConfig.builder().build();
+    private NeptuneConfig neptuneConfig = NeptuneConfig.builder().build();
+    private CostExplorerConfig costExplorerConfig = CostExplorerConfig.builder().build();
+    private CurConfig curConfig = CurConfig.builder().build();
+    private BcmDataExportsConfig bcmDataExportsConfig = BcmDataExportsConfig.builder().build();
 
     /**
      * Creates a new Floci container with the default image ({@code floci/floci:latest}).
@@ -534,6 +542,34 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     }
 
     /**
+     * CloudFront-specific settings such as domain suffix
+     *
+     * @return the CloudFront configuration
+     */
+    public CloudFrontConfig getCloudFrontConfig() {
+        return cloudFrontConfig;
+    }
+
+    /**
+     * Configures cloudfront-specific settings such as domain suffix.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withCloudFrontConfig(c -> c.domainSuffix("example.net"));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link CloudFrontConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withCloudFrontConfig(Consumer<CloudFrontConfig.Builder> configurer) {
+        CloudFrontConfig.Builder builder = CloudFrontConfig.builder();
+        configurer.accept(builder);
+        this.cloudFrontConfig = builder.build();
+        cloudFrontConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
      * CloudWatch Logs-specific settings such as query event limits
      *
      * @return the CloudWatch Logs configuration
@@ -614,6 +650,34 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         configurer.accept(builder);
         this.cognitoConfig = builder.build();
         cognitoConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
+     * AWS Config-specific settings
+     *
+     * @return the AWS Config configuration
+     */
+    public ConfigServiceConfig getConfigServiceConfig() {
+        return configServiceConfig;
+    }
+
+    /**
+     * Configures AWS Config-specific settings.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withConfigServiceConfig(c -> c.enabled(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link ConfigServiceConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withConfigServiceConfig(Consumer<ConfigServiceConfig.Builder> configurer) {
+        ConfigServiceConfig.Builder builder = ConfigServiceConfig.builder();
+        configurer.accept(builder);
+        this.configServiceConfig = builder.build();
+        configServiceConfig.applyEnvVarsToContainer(this);
         return this;
     }
 
@@ -1647,6 +1711,151 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     }
 
     /**
+     * Neptune-specific settings such as proxy ports and default image.
+     *
+     * @return the Neptune configuration
+     */
+    public NeptuneConfig getNeptuneConfig() {
+        return neptuneConfig;
+    }
+
+    /**
+     * Configures Neptune-specific settings such as proxy ports and default image.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withNeptuneConfig(c -> c
+     *         .proxyPortRange(8182, 8282)
+     *         .defaultImage("tinkerpop/gremlin-server:3.7.3"));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link NeptuneConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withNeptuneConfig(Consumer<NeptuneConfig.Builder> configurer) {
+        NeptuneConfig.Builder builder = NeptuneConfig.builder();
+        configurer.accept(builder);
+        this.neptuneConfig = builder.build();
+        configureExposedPorts();
+        neptuneConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
+     * Cost Explorer-specific settings such as the synthetic monthly credit.
+     *
+     * @return the Cost Explorer configuration
+     */
+    public CostExplorerConfig getCostExplorerConfig() {
+        return costExplorerConfig;
+    }
+
+    /**
+     * Configures Cost Explorer-specific settings such as the synthetic monthly credit.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withCostExplorerConfig(c -> c.creditUsdMonthly(100.0));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link CostExplorerConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withCostExplorerConfig(Consumer<CostExplorerConfig.Builder> configurer) {
+        CostExplorerConfig.Builder builder = CostExplorerConfig.builder();
+        configurer.accept(builder);
+        this.costExplorerConfig = builder.build();
+        costExplorerConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
+     * CUR (Cost and Usage Reports)-specific settings such as emit mode and staging bucket.
+     *
+     * @return the CUR configuration
+     */
+    public CurConfig getCurConfig() {
+        return curConfig;
+    }
+
+    /**
+     * Configures CUR (Cost and Usage Reports)-specific settings such as emit mode and staging bucket.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withCurConfig(c -> c.emitMode("daily").stagingBucket("my-bucket"));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link CurConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withCurConfig(Consumer<CurConfig.Builder> configurer) {
+        CurConfig.Builder builder = CurConfig.builder();
+        configurer.accept(builder);
+        this.curConfig = builder.build();
+        curConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
+     * BCM Data Exports-specific settings such as emit mode.
+     *
+     * @return the BCM Data Exports configuration
+     */
+    public BcmDataExportsConfig getBcmDataExportsConfig() {
+        return bcmDataExportsConfig;
+    }
+
+    /**
+     * Configures BCM Data Exports-specific settings such as emit mode.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withBcmDataExportsConfig(c -> c.emitMode("daily"));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link BcmDataExportsConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withBcmDataExportsConfig(Consumer<BcmDataExportsConfig.Builder> configurer) {
+        BcmDataExportsConfig.Builder builder = BcmDataExportsConfig.builder();
+        configurer.accept(builder);
+        this.bcmDataExportsConfig = builder.build();
+        bcmDataExportsConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
+     * Returns the current DuckDB configuration. Defaults to the default image and no custom URL.
+     *
+     * @return the DuckDB configuration
+     */
+    public DuckDbConfig getDuckDbConfig() {
+        return duckDbConfig;
+    }
+
+    /**
+     * Configures DuckDB-specific settings such as custom URL or default image.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withDuckDbConfig(c -> c
+     *         .url("http://duckdb:8080")
+     *         .defaultImage("floci/floci-duck:1.5.18"));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link DuckDbConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withDuckDbConfig(Consumer<DuckDbConfig.Builder> configurer) {
+        DuckDbConfig.Builder builder = DuckDbConfig.builder();
+        configurer.accept(builder);
+        this.duckDbConfig = builder.build();
+        duckDbConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
      * Configures all exposed ports of the Floci container
      */
     private void configureExposedPorts() {
@@ -1660,6 +1869,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         eksConfig.applyExposedPortsToContainer(this);
         ec2Config.applyExposedPortsToContainer(this);
         elbV2Config.applyExposedPortsToContainer(this);
+        neptuneConfig.applyExposedPortsToContainer(this);
     }
 
     /**
@@ -1668,6 +1878,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     private void configureEnvVars() {
         tlsConfig.applyEnvVarsToContainer(this);
         storageConfig.applyEnvVarsToContainer(this);
+        duckDbConfig.applyEnvVarsToContainer(this);
 
         // Services config
         acmConfig.applyEnvVarsToContainer(this);
@@ -1715,6 +1926,10 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         route53Config.applyEnvVarsToContainer(this);
         textractConfig.applyEnvVarsToContainer(this);
         pricingConfig.applyEnvVarsToContainer(this);
+        neptuneConfig.applyEnvVarsToContainer(this);
+        costExplorerConfig.applyEnvVarsToContainer(this);
+        curConfig.applyEnvVarsToContainer(this);
+        bcmDataExportsConfig.applyEnvVarsToContainer(this);
     }
 
     private static String uniqueShortId() {

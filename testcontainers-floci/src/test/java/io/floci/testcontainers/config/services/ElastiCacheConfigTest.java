@@ -17,6 +17,7 @@ class ElastiCacheConfigTest {
         assertThat(config.getProxyMaxPort()).isEqualTo(6388);
         assertThat(config.getProxyPortsCount()).isEqualTo(10);
         assertThat(config.getDefaultImage()).isEqualTo("valkey/valkey:8");
+        assertThat(config.getDefaultMemcachedImage()).isEqualTo("memcached:1.6");
         assertThat(config.getDockerNetwork()).isNull();
     }
 
@@ -26,6 +27,7 @@ class ElastiCacheConfigTest {
                 .enabled(false)
                 .proxyPortRange(7000, 50)
                 .defaultImage("redis:7")
+                .defaultMemcachedImage("memcached:1.7")
                 .dockerNetwork("my-cache-network")
                 .build();
         assertThat(config.isEnabled()).isFalse();
@@ -33,6 +35,7 @@ class ElastiCacheConfigTest {
         assertThat(config.getProxyMaxPort()).isEqualTo(7049);
         assertThat(config.getProxyPortsCount()).isEqualTo(50);
         assertThat(config.getDefaultImage()).isEqualTo("redis:7");
+        assertThat(config.getDefaultMemcachedImage()).isEqualTo("memcached:1.7");
         assertThat(config.getDockerNetwork()).isEqualTo("my-cache-network");
     }
 
@@ -46,6 +49,7 @@ class ElastiCacheConfigTest {
                 .containsEntry("FLOCI_SERVICES_ELASTICACHE_PROXY_BASE_PORT", "6379")
                 .containsEntry("FLOCI_SERVICES_ELASTICACHE_PROXY_MAX_PORT", "6388")
                 .containsEntry("FLOCI_SERVICES_ELASTICACHE_DEFAULT_IMAGE", "valkey/valkey:8")
+                .containsEntry("FLOCI_SERVICES_ELASTICACHE_DEFAULT_MEMCACHED_IMAGE", "memcached:1.6")
                 .doesNotContainKey("FLOCI_SERVICES_ELASTICACHE_DOCKER_NETWORK");
     }
 
@@ -56,6 +60,7 @@ class ElastiCacheConfigTest {
                 .enabled(true)
                 .proxyPortRange(7000, 50)
                 .defaultImage("redis:7")
+                .defaultMemcachedImage("memcached:1.7")
                 .dockerNetwork("my-cache-network")
                 .build()
                 .applyEnvVarsToContainer(container);
@@ -65,6 +70,7 @@ class ElastiCacheConfigTest {
                 .containsEntry("FLOCI_SERVICES_ELASTICACHE_PROXY_BASE_PORT", "7000")
                 .containsEntry("FLOCI_SERVICES_ELASTICACHE_PROXY_MAX_PORT", "7049")
                 .containsEntry("FLOCI_SERVICES_ELASTICACHE_DEFAULT_IMAGE", "redis:7")
+                .containsEntry("FLOCI_SERVICES_ELASTICACHE_DEFAULT_MEMCACHED_IMAGE", "memcached:1.7")
                 .containsEntry("FLOCI_SERVICES_ELASTICACHE_DOCKER_NETWORK", "my-cache-network");
     }
 
