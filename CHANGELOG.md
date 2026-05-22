@@ -1,3 +1,14 @@
+# [1.6.1](https://github.com/floci-io/testcontainers-floci/compare/v1.5.0...v1.6.1) (2026-05-22)
+
+
+### Features
+
+* add config support for all services available in Floci 1.5.18 ([5205b0c](https://github.com/floci-io/testcontainers-floci/commit/5205b0cf365d8c98969a27dbe2549e0532c83bc7))
+* add support for default Memcached image in ElastiCache configuration ([10aedfc](https://github.com/floci-io/testcontainers-floci/commit/10aedfc14f2aa7492cb9ffc712a1282b6e328a4c))
+* moved config from AthenaConfig to a dedicated DuckDB config ([358c696](https://github.com/floci-io/testcontainers-floci/commit/358c696ce71c98cfbb093e12ee1fe4798b2f81be))
+
+
+
 # [1.5.0](https://github.com/floci-io/testcontainers-floci/compare/v1.4.0...v1.5.0) (2026-05-12)
 
 
