@@ -1,11 +1,22 @@
-# [1.6.1](https://github.com/floci-io/testcontainers-floci/compare/v1.5.0...v1.6.1) (2026-05-22)
+# [1.7.0](https://github.com/floci-io/testcontainers-floci/compare/v1.6.1...v1.7.0) (2026-05-28)
 
 
 ### Features
 
-* add config support for all services available in Floci 1.5.18 ([5205b0c](https://github.com/floci-io/testcontainers-floci/commit/5205b0cf365d8c98969a27dbe2549e0532c83bc7))
-* add support for default Memcached image in ElastiCache configuration ([10aedfc](https://github.com/floci-io/testcontainers-floci/commit/10aedfc14f2aa7492cb9ffc712a1282b6e328a4c))
-* moved config from AthenaConfig to a dedicated DuckDB config ([358c696](https://github.com/floci-io/testcontainers-floci/commit/358c696ce71c98cfbb093e12ee1fe4798b2f81be))
+* empty commit to increase version ([246eb50](https://github.com/floci-io/testcontainers-floci/commit/246eb503621599d3edb051f8a0e446d2e40a9932))
+
+
+
+## [1.6.1](https://github.com/floci-io/testcontainers-floci/compare/v1.5.0...v1.6.1) (2026-05-22)
+
+
+### Features
+
+* add config support for all services available in Floci 1.5.18 ([151ea66](https://github.com/floci-io/testcontainers-floci/commit/151ea6672730a9393f2229721f243fece2d4d4b6))
+* add missing tests for various FlociContainer service configs ([05a194f](https://github.com/floci-io/testcontainers-floci/commit/05a194f994b6265768f007467805e4c76a96f4ff))
+* add support for default Memcached image in ElastiCache configuration ([9633e4b](https://github.com/floci-io/testcontainers-floci/commit/9633e4b0ad6a146287db6989204889c0f13d3e32))
+* added support for Pricing Service ([6669e20](https://github.com/floci-io/testcontainers-floci/commit/6669e20337f14f334996428f64271cad5886d4ce))
+* moved config from AthenaConfig to a dedicated DuckDB config ([2b3af6b](https://github.com/floci-io/testcontainers-floci/commit/2b3af6b53de5ddc0c617e48aeb9e80dcbaf03045))
 
 
 
@@ -55,32 +66,6 @@
 ### Features
 
 * added missing configuration options and services from Floci v1.5.7 ([b80ca75](https://github.com/floci-io/testcontainers-floci/commit/b80ca756868e7f666c4f966da953019e9c4fb791))
-
-
-
-# [1.2.0](https://github.com/floci-io/testcontainers-floci/compare/v1.1.0...v1.2.0) (2026-04-23)
-
-
-### Features
-
-* added configuration support for default account id and default availability zone ([8278e21](https://github.com/floci-io/testcontainers-floci/commit/8278e217f374cfd77ef5b36af69a3361b70aa207))
-* added support for configuring all services supported by Floci that don't startup child containers ([905813e](https://github.com/floci-io/testcontainers-floci/commit/905813e64fd93abb4fa215a61b2b3d85bccafa42))
-* added support for ElastiCache, OpenSearch, ECS and ECR. ([b55bc6e](https://github.com/floci-io/testcontainers-floci/commit/b55bc6eafc18ca37889a2bad9c72ff5a94862442))
-* floci docker image moved ([01f0fa8](https://github.com/floci-io/testcontainers-floci/commit/01f0fa82ca4535c7204e93e971b8b4421f715c2d))
-
-
-
-# [1.1.0](https://github.com/floci-io/testcontainers-floci/compare/v1.0.1...v1.1.0) (2026-04-11)
-
-
-### Features
-
-* added testcases for all services that are available in Floci but were not covered yet ([c2677b5](https://github.com/floci-io/testcontainers-floci/commit/c2677b56e4802498d5e58dd6e038a7b3e99b8121))
-* **lambda:** added support for lambdas ([c10a1d2](https://github.com/floci-io/testcontainers-floci/commit/c10a1d22b85e64a3995791d083fbc43ecd596940))
-* **logging:** allow configuration of Floci's log level ([ced1d04](https://github.com/floci-io/testcontainers-floci/commit/ced1d041bbf174457f36fd6ba3ba2a95919deca0))
-* **network:** added support for creating a dedicated Docker network for Floci and all its child containers ([a720af2](https://github.com/floci-io/testcontainers-floci/commit/a720af23845a034a59678952e2a64c0d83e040de))
-* **rds:** added support for creating and accessing RDS instances ([4c456d8](https://github.com/floci-io/testcontainers-floci/commit/4c456d8193b1b0045c98b1c917ae332c10e43d58))
-* use Floci's health check endpoint to consider the container to be started up ([adbe079](https://github.com/floci-io/testcontainers-floci/commit/adbe079bf7d080afefa4a06edf69b865abdbc290))
 
 
 
