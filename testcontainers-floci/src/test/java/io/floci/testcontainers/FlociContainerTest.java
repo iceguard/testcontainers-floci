@@ -3,6 +3,7 @@ package io.floci.testcontainers;
 import org.junit.jupiter.api.Test;
 import org.slf4j.event.Level;
 import org.testcontainers.utility.DockerImageName;
+import org.testcontainers.images.builder.Transferable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -127,6 +128,23 @@ class FlociContainerTest {
             String network1 = container1.getDedicatedNetworkName();
             String network2 = container2.getDedicatedNetworkName();
             assertThat(network1).isNotEqualTo(network2);
+        }
+    }
+    
+    @Test
+    void shouldWaitForStartScriptsToComplete() throws Exception {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withCopyToContainer(Transferable.of("""
+                    #!/bin/sh
+                    set -eu
+                    sleep 2
+                    touch /tmp/floci-start-script-completed
+                    """, 0777), "/etc/floci/init/start.d/01-slow-start.sh");
+
+            container.start();
+
+            assertThat(container.execInContainer("test", "-f", "/tmp/floci-start-script-completed")
+                    .getExitCode()).isZero();
         }
     }
 }
