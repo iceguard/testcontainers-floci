@@ -151,8 +151,10 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
 
         // Configure observability and healthcheck
         withLogLevel(Level.WARN);
-        waitingFor(Wait.forHttp("/_floci/health")
+        waitingFor(Wait.forHttp("/_floci/init")
                 .forPort(PORT)
+                .forStatusCode(200)
+                .forResponsePredicate(response -> response.matches("(?s).*\"ready\"\\s*:\\s*true.*"))
                 .withStartupTimeout(Duration.ofSeconds(30)));
 
         // Configure ports and env vars
