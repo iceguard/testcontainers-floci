@@ -74,6 +74,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     private ApiGatewayV2Config apiGatewayV2Config = ApiGatewayV2Config.builder().build();
     private AppConfigConfig appConfigConfig = AppConfigConfig.builder().build();
     private AppConfigDataConfig appConfigDataConfig = AppConfigDataConfig.builder().build();
+    private AppSyncConfig appSyncConfig = AppSyncConfig.builder().build();
     private CloudFormationConfig cloudFormationConfig = CloudFormationConfig.builder().build();
     private CloudFrontConfig cloudFrontConfig = CloudFrontConfig.builder().build();
     private CloudWatchLogsConfig cloudWatchLogsConfig = CloudWatchLogsConfig.builder().build();
@@ -514,6 +515,34 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         configurer.accept(builder);
         this.appConfigDataConfig = builder.build();
         appConfigDataConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
+     * AppSync-specific settings.
+     *
+     * @return the AppSync configuration
+     */
+    public AppSyncConfig getAppSyncConfig() {
+        return appSyncConfig;
+    }
+
+    /**
+     * Configures AppSync-specific settings.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withAppSyncConfig(c -> c.enabled(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link AppSyncConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withAppSyncConfig(Consumer<AppSyncConfig.Builder> configurer) {
+        AppSyncConfig.Builder builder = AppSyncConfig.builder();
+        configurer.accept(builder);
+        this.appSyncConfig = builder.build();
+        appSyncConfig.applyEnvVarsToContainer(this);
         return this;
     }
 
@@ -1890,6 +1919,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         apiGatewayV2Config.applyEnvVarsToContainer(this);
         appConfigConfig.applyEnvVarsToContainer(this);
         appConfigDataConfig.applyEnvVarsToContainer(this);
+        appSyncConfig.applyEnvVarsToContainer(this);
         cloudFormationConfig.applyEnvVarsToContainer(this);
         cloudWatchLogsConfig.applyEnvVarsToContainer(this);
         cloudWatchMetricsConfig.applyEnvVarsToContainer(this);
