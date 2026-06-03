@@ -23,6 +23,11 @@ public class SsmConfig extends AbstractServiceConfig {
         this.maxParameterHistory = builder.maxParameterHistory;
     }
 
+    /**
+     * Returns a new {@link Builder} for this configuration.
+     *
+     * @return a new builder
+     */
     public static Builder builder() {
         return new Builder();
     }

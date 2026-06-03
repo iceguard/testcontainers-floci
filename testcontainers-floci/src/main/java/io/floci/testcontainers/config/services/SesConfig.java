@@ -36,6 +36,11 @@ public class SesConfig extends AbstractServiceConfig {
         this.smtpStarttls = builder.smtpStarttls;
     }
 
+    /**
+     * Returns a new {@link Builder} for this configuration.
+     *
+     * @return a new builder
+     */
     public static Builder builder() {
         return new Builder();
     }

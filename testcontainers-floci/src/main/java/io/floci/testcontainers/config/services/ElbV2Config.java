@@ -28,6 +28,11 @@ public class ElbV2Config extends AbstractServiceConfig {
         this.listenerPorts = List.copyOf(builder.listenerPorts);
     }
 
+    /**
+     * Returns a new {@link Builder} for this configuration.
+     *
+     * @return a new builder
+     */
     public static Builder builder() {
         return new Builder();
     }

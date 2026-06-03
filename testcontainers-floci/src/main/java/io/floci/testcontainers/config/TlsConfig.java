@@ -36,6 +36,11 @@ public class TlsConfig {
         this.selfSigned = builder.selfSigned;
     }
 
+    /**
+     * Returns a new {@link Builder} for this configuration.
+     *
+     * @return a new builder
+     */
     public static Builder builder() {
         return new Builder();
     }

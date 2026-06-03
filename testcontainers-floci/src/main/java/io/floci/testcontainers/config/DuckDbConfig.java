@@ -25,6 +25,11 @@ public class DuckDbConfig {
         this.defaultImage = builder.defaultImage;
     }
 
+    /**
+     * Returns a new {@link Builder} for this configuration.
+     *
+     * @return a new builder
+     */
     public static Builder builder() {
         return new Builder();
     }

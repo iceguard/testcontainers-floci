@@ -23,6 +23,11 @@ public class BcmDataExportsConfig extends AbstractServiceConfig {
         this.emitMode = builder.emitMode;
     }
 
+    /**
+     * Returns a new {@link Builder} for this configuration.
+     *
+     * @return a new builder
+     */
     public static Builder builder() {
         return new Builder();
     }

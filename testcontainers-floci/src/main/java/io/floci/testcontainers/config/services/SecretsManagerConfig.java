@@ -23,6 +23,11 @@ public class SecretsManagerConfig extends AbstractServiceConfig {
         this.defaultRecoveryWindowDays = builder.defaultRecoveryWindowDays;
     }
 
+    /**
+     * Returns a new {@link Builder} for this configuration.
+     *
+     * @return a new builder
+     */
     public static Builder builder() {
         return new Builder();
     }

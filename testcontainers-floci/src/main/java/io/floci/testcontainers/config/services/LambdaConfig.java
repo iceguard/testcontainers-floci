@@ -60,6 +60,11 @@ public class LambdaConfig extends AbstractServiceConfig {
         this.awsConfigPath = builder.awsConfigPath;
     }
 
+    /**
+     * Returns a new {@link Builder} for this configuration.
+     *
+     * @return a new builder
+     */
     public static Builder builder() {
         return new Builder();
     }

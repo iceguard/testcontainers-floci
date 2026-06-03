@@ -10,10 +10,16 @@ import org.testcontainers.containers.Container;
  */
 public abstract class AbstractServiceConfig {
 
+    /** Default value for the {@link #isEnabled()} flag. */
     protected static final boolean DEFAULT_ENABLED = true;
 
     private final boolean enabled;
 
+    /**
+     * Creates a new service configuration with the given enabled flag.
+     *
+     * @param enabled {@code true} to enable the service
+     */
     protected AbstractServiceConfig(boolean enabled) {
         this.enabled = enabled;
     }

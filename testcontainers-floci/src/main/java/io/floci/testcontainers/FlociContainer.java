@@ -288,6 +288,8 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     /**
      * Configures a dedicated Docker network for this container that will be used by Floci itself and by all
      * services, that spin up additional containers like RDS, Lambda or ElasticCache.
+     *
+     * @return this container instance
      */
     public FlociContainer withDedicatedNetwork() {
         String networkName = "floci-network-" + uniqueShortId();

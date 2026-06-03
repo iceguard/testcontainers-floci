@@ -39,6 +39,11 @@ public class RdsConfig extends AbstractServiceConfig {
         this.dockerNetwork = builder.dockerNetwork;
     }
 
+    /**
+     * Returns a new {@link Builder} for this configuration.
+     *
+     * @return a new builder
+     */
     public static Builder builder() {
         return new Builder();
     }

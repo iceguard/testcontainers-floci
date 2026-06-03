@@ -30,6 +30,11 @@ public class StorageConfig {
         this.pruneVolumesOnDelete = builder.pruneVolumesOnDelete;
     }
 
+    /**
+     * Returns a new {@link Builder} for this configuration.
+     *
+     * @return a new builder
+     */
     public static Builder builder() {
         return new Builder();
     }

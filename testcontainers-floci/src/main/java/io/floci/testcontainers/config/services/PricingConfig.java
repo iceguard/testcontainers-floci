@@ -22,6 +22,11 @@ public class PricingConfig extends AbstractServiceConfig {
         this.snapshotPath = builder.snapshotPath;
     }
 
+    /**
+     * Returns a new {@link Builder} for this configuration.
+     *
+     * @return a new builder
+     */
     public static Builder builder() {
         return new Builder();
     }
