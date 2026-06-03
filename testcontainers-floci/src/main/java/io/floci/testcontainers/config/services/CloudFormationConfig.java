@@ -8,14 +8,19 @@ import org.testcontainers.containers.Container;
  * <p>Instances are created via {@link Builder}:
  * <pre>{@code
  * CloudFormationConfig config = CloudFormationConfig.builder()
+ *     .deletedStackRetentionSeconds(60)
  *     .build();
  * }</pre>
  */
 public class CloudFormationConfig extends AbstractServiceConfig {
 
+    private static final long DEFAULT_DELETED_STACK_RETENTION_SECONDS = 30L;
+
+    private final long deletedStackRetentionSeconds;
 
     private CloudFormationConfig(Builder builder) {
         super(builder.enabled);
+        this.deletedStackRetentionSeconds = builder.deletedStackRetentionSeconds;
     }
 
     /**
@@ -27,10 +32,22 @@ public class CloudFormationConfig extends AbstractServiceConfig {
         return new Builder();
     }
 
+    /**
+     * Returns how long deleted stacks are retained in seconds.
+     *
+     * @return the deleted stack retention period in seconds
+     */
+    public long getDeletedStackRetentionSeconds() {
+        return deletedStackRetentionSeconds;
+    }
 
     @Override
     public void applyEnvVarsToContainer(Container<?> container) {
         container.withEnv("FLOCI_SERVICES_CLOUDFORMATION_ENABLED", String.valueOf(isEnabled()));
+
+        if (isEnabled()) {
+            container.withEnv("FLOCI_SERVICES_CLOUDFORMATION_DELETED_STACK_RETENTION_SECONDS", String.valueOf(deletedStackRetentionSeconds));
+        }
     }
 
     /**
@@ -39,6 +56,7 @@ public class CloudFormationConfig extends AbstractServiceConfig {
     public static class Builder {
 
         private boolean enabled = DEFAULT_ENABLED;
+        private long deletedStackRetentionSeconds = DEFAULT_DELETED_STACK_RETENTION_SECONDS;
 
         private Builder() {
             // Allow instantiation only via CloudFormationConfig.builder()
@@ -52,6 +70,17 @@ public class CloudFormationConfig extends AbstractServiceConfig {
          */
         public Builder enabled(boolean enabled) {
             this.enabled = enabled;
+            return this;
+        }
+
+        /**
+         * Sets how long deleted stacks are retained in seconds.
+         *
+         * @param deletedStackRetentionSeconds the retention period in seconds (default {@value DEFAULT_DELETED_STACK_RETENTION_SECONDS})
+         * @return this builder
+         */
+        public Builder deletedStackRetentionSeconds(long deletedStackRetentionSeconds) {
+            this.deletedStackRetentionSeconds = deletedStackRetentionSeconds;
             return this;
         }
 

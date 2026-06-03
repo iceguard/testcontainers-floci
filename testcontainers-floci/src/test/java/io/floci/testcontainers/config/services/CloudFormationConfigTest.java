@@ -12,14 +12,17 @@ class CloudFormationConfigTest {
     void shouldApplyDefaultCloudFormationConfig() {
         CloudFormationConfig config = CloudFormationConfig.builder().build();
         assertThat(config.isEnabled()).isTrue();
+        assertThat(config.getDeletedStackRetentionSeconds()).isEqualTo(30L);
     }
 
     @Test
     void shouldApplyCustomCloudFormationConfig() {
         CloudFormationConfig config = CloudFormationConfig.builder()
                 .enabled(false)
+                .deletedStackRetentionSeconds(120L)
                 .build();
         assertThat(config.isEnabled()).isFalse();
+        assertThat(config.getDeletedStackRetentionSeconds()).isEqualTo(120L);
     }
 
     @Test
@@ -27,7 +30,9 @@ class CloudFormationConfigTest {
         GenericContainer<?> container = genericContainer();
         CloudFormationConfig.builder().build().applyEnvVarsToContainer(container);
 
-        assertThat(container.getEnvMap()).containsEntry("FLOCI_SERVICES_CLOUDFORMATION_ENABLED", "true");
+        assertThat(container.getEnvMap())
+                .containsEntry("FLOCI_SERVICES_CLOUDFORMATION_ENABLED", "true")
+                .containsEntry("FLOCI_SERVICES_CLOUDFORMATION_DELETED_STACK_RETENTION_SECONDS", "30");
     }
 
     @Test
@@ -35,6 +40,17 @@ class CloudFormationConfigTest {
         GenericContainer<?> container = genericContainer();
         CloudFormationConfig.builder().enabled(false).build().applyEnvVarsToContainer(container);
 
-        assertThat(container.getEnvMap()).containsEntry("FLOCI_SERVICES_CLOUDFORMATION_ENABLED", "false");
+        assertThat(container.getEnvMap())
+                .containsEntry("FLOCI_SERVICES_CLOUDFORMATION_ENABLED", "false")
+                .doesNotContainKey("FLOCI_SERVICES_CLOUDFORMATION_DELETED_STACK_RETENTION_SECONDS");
+    }
+
+    @Test
+    void shouldApplyCustomDeletedStackRetentionSecondsEnvVarToContainer() {
+        GenericContainer<?> container = genericContainer();
+        CloudFormationConfig.builder().deletedStackRetentionSeconds(120L).build().applyEnvVarsToContainer(container);
+
+        assertThat(container.getEnvMap())
+                .containsEntry("FLOCI_SERVICES_CLOUDFORMATION_DELETED_STACK_RETENTION_SECONDS", "120");
     }
 }
