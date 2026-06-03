@@ -52,6 +52,15 @@ class FlociContainerServicesConfigTest {
     }
 
     @Test
+    void shouldStoreAppSyncConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withAppSyncConfig(c -> c.enabled(false));
+
+            assertThat(container.getAppSyncConfig().isEnabled()).isFalse();
+        }
+    }
+
+    @Test
     void shouldStoreCloudFormationConfigOnContainer() {
         try (FlociContainer container = new FlociContainer()) {
             container.withCloudFormationConfig(c -> c.enabled(false));
