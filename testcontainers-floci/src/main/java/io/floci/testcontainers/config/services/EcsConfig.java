@@ -33,6 +33,11 @@ public class EcsConfig extends AbstractServiceConfig {
         this.defaultCpuUnits = builder.defaultCpuUnits;
     }
 
+    /**
+     * Returns a new {@link Builder} for this configuration.
+     *
+     * @return a new builder
+     */
     public static Builder builder() {
         return new Builder();
     }

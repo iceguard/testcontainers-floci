@@ -32,6 +32,11 @@ public class Route53Config extends AbstractServiceConfig {
         this.defaultNameserver4 = builder.defaultNameserver4;
     }
 
+    /**
+     * Returns a new {@link Builder} for this configuration.
+     *
+     * @return a new builder
+     */
     public static Builder builder() {
         return new Builder();
     }

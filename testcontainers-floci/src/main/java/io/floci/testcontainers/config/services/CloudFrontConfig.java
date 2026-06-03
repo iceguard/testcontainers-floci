@@ -23,6 +23,11 @@ public class CloudFrontConfig extends AbstractServiceConfig {
         this.domainSuffix = builder.domainSuffix;
     }
 
+    /**
+     * Returns a new {@link Builder} for this configuration.
+     *
+     * @return a new builder
+     */
     public static Builder builder() {
         return new Builder();
     }

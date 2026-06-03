@@ -23,6 +23,11 @@ public class CostExplorerConfig extends AbstractServiceConfig {
         this.creditUsdMonthly = builder.creditUsdMonthly;
     }
 
+    /**
+     * Returns a new {@link Builder} for this configuration.
+     *
+     * @return a new builder
+     */
     public static Builder builder() {
         return new Builder();
     }

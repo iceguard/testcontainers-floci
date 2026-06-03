@@ -33,6 +33,11 @@ public class Ec2Config extends AbstractServiceConfig {
         this.autoScaling = builder.autoScaling;
     }
 
+    /**
+     * Returns a new {@link Builder} for this configuration.
+     *
+     * @return a new builder
+     */
     public static Builder builder() {
         return new Builder();
     }
