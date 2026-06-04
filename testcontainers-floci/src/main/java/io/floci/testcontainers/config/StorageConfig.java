@@ -22,7 +22,7 @@ public class StorageConfig {
 
     private static final boolean DEFAULT_PRUNE_VOLUMES_ON_DELETE = true;
 
-    private final Optional<Path> hostPersistentPath;
+    private final Path hostPersistentPath;
     private final boolean pruneVolumesOnDelete;
 
     private StorageConfig(Builder builder) {
@@ -51,7 +51,7 @@ public class StorageConfig {
      * @return the host-side persistent storage path, or {@link Optional#empty()} if not configured
      */
     public Optional<Path> getHostPersistentPath() {
-        return hostPersistentPath;
+        return Optional.ofNullable(hostPersistentPath);
     }
 
     /**
@@ -75,8 +75,9 @@ public class StorageConfig {
      * @param container the container to configure
      */
     public void applyEnvVarsToContainer(Container<?> container) {
-        hostPersistentPath.ifPresent(path ->
-                container.withEnv("FLOCI_STORAGE_HOST_PERSISTENT_PATH", path.toString()));
+        if (hostPersistentPath != null) {
+            container.withEnv("FLOCI_STORAGE_HOST_PERSISTENT_PATH", hostPersistentPath.toString());
+        }
         container.withEnv("FLOCI_STORAGE_PRUNE_VOLUMES_ON_DELETE", String.valueOf(pruneVolumesOnDelete));
     }
 
@@ -85,7 +86,7 @@ public class StorageConfig {
      */
     public static class Builder {
 
-        private Optional<Path> hostPersistentPath = Optional.empty();
+        private Path hostPersistentPath = null;
         private boolean pruneVolumesOnDelete = DEFAULT_PRUNE_VOLUMES_ON_DELETE;
 
         private Builder() {
@@ -103,7 +104,7 @@ public class StorageConfig {
          */
         public Builder randomHostPersistentPath() {
             try {
-                this.hostPersistentPath = Optional.of(Files.createTempDirectory("floci-").toAbsolutePath());
+                this.hostPersistentPath = Files.createTempDirectory("floci-").toAbsolutePath();
                 return this;
             } catch (IOException e) {
                 throw new IllegalStateException("Failed to create temporary persistent storage directory", e);

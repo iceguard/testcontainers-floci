@@ -15,7 +15,7 @@ import java.util.Optional;
  */
 public class PricingConfig extends AbstractServiceConfig {
 
-    private final Optional<String> snapshotPath;
+    private final String snapshotPath;
 
     private PricingConfig(Builder builder) {
         super(builder.enabled);
@@ -43,14 +43,15 @@ public class PricingConfig extends AbstractServiceConfig {
      * @return the snapshot path, or {@link Optional#empty()} if not configured
      */
     public Optional<String> getSnapshotPath() {
-        return snapshotPath;
+        return Optional.ofNullable(snapshotPath);
     }
 
     @Override
     public void applyEnvVarsToContainer(Container<?> container) {
         container.withEnv("FLOCI_SERVICES_PRICING_ENABLED", String.valueOf(isEnabled()));
-        snapshotPath.ifPresent(path ->
-                container.withEnv("FLOCI_SERVICES_PRICING_SNAPSHOT_PATH", path));
+        if (snapshotPath != null) {
+            container.withEnv("FLOCI_SERVICES_PRICING_SNAPSHOT_PATH", snapshotPath);
+        }
     }
 
     /**
@@ -59,7 +60,7 @@ public class PricingConfig extends AbstractServiceConfig {
     public static class Builder {
 
         private boolean enabled = DEFAULT_ENABLED;
-        private Optional<String> snapshotPath = Optional.empty();
+        private String snapshotPath = null;
 
         private Builder() {
             // Allow instantiation only via PricingConfig.builder()
@@ -88,7 +89,7 @@ public class PricingConfig extends AbstractServiceConfig {
          * @return this builder
          */
         public Builder snapshotPath(String snapshotPath) {
-            this.snapshotPath = Optional.ofNullable(snapshotPath);
+            this.snapshotPath = snapshotPath;
             return this;
         }
 
