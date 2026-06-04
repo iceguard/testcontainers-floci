@@ -1,3 +1,22 @@
+# [1.8.0](https://github.com/floci-io/testcontainers-floci/compare/v1.7.0...v1.8.0) (2026-06-04)
+
+
+### Bug Fixes
+
+* ensure Optional<> is used only for return values ([c871a63](https://github.com/floci-io/testcontainers-floci/commit/c871a637812be4b73a48558ec15fe1a878ac7c19))
+* wait for startup scripts to complete ([d7a0f56](https://github.com/floci-io/testcontainers-floci/commit/d7a0f56b28f0d0f70692a64dc035df9332692476))
+
+
+### Features
+
+* **cloud-formation:** added support for configuration of deletedStackRetentionSeconds at Cloud Formation service ([7989a70](https://github.com/floci-io/testcontainers-floci/commit/7989a7092ed9dd32e752d664fae1e76339e3e7bc))
+* **eks:** added support for endpointMode and IAM auth webhook (de-)activation ([a1224ff](https://github.com/floci-io/testcontainers-floci/commit/a1224ff2d9c9e3e9d622b2e3d8e7bb2419eca5a7))
+* **opensearch:** make defaultImage property optional and use Floci's default instead ([a6646d2](https://github.com/floci-io/testcontainers-floci/commit/a6646d281aaaeea9c690dbe1c6759a876094ff9f))
+* **services:** added support for AWS AppSync ([98b16d1](https://github.com/floci-io/testcontainers-floci/commit/98b16d11310dac36d8a732d514b71337c0fc1852))
+* **seurity:** added support for Browser CORS security config ([8829676](https://github.com/floci-io/testcontainers-floci/commit/88296769686e2168a1c9941e4292e28abf856bf0))
+
+
+
 # [1.7.0](https://github.com/floci-io/testcontainers-floci/compare/v1.6.1...v1.7.0) (2026-05-28)
 
 
@@ -57,15 +76,6 @@
 * **codebuild:** added support for dockerNetwork config for CodeBuild ([fb9f600](https://github.com/floci-io/testcontainers-floci/commit/fb9f600f587ebe3fb191d979aa98ecc17922a2f8))
 * **lambda:** added support for Lambda hot-reload configuration ([1ea6b79](https://github.com/floci-io/testcontainers-floci/commit/1ea6b79828e9256f72661cb5ea72b3251bd49206))
 * **services:** added missing configuration options and services from Floci v1.5.9 ([286d782](https://github.com/floci-io/testcontainers-floci/commit/286d7827f6df49e85d49a9693cca4d37283fd623))
-
-
-
-# [1.3.0](https://github.com/floci-io/testcontainers-floci/compare/v1.2.0...v1.3.0) (2026-04-24)
-
-
-### Features
-
-* added missing configuration options and services from Floci v1.5.7 ([b80ca75](https://github.com/floci-io/testcontainers-floci/commit/b80ca756868e7f666c4f966da953019e9c4fb791))
 
 
 
