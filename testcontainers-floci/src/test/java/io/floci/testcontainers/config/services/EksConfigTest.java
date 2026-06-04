@@ -20,6 +20,8 @@ class EksConfigTest {
         assertThat(config.getApiServerPortsCount()).isEqualTo(10);
         assertThat(config.getApiServerMaxPort()).isEqualTo(6509);
         assertThat(config.getDockerNetwork()).isNull();
+        assertThat(config.getEndpointMode()).isEqualTo("host");
+        assertThat(config.isIamAuthWebhook()).isTrue();
     }
 
     @Test
@@ -31,6 +33,8 @@ class EksConfigTest {
                 .defaultImage("kindest/node:v1.30")
                 .apiServerPortRange(8000, 50)
                 .dockerNetwork("my-eks-network")
+                .endpointMode("network")
+                .iamAuthWebhook(false)
                 .build();
         assertThat(config.isEnabled()).isFalse();
         assertThat(config.isMock()).isTrue();
@@ -40,6 +44,8 @@ class EksConfigTest {
         assertThat(config.getApiServerPortsCount()).isEqualTo(50);
         assertThat(config.getApiServerMaxPort()).isEqualTo(8049);
         assertThat(config.getDockerNetwork()).isEqualTo("my-eks-network");
+        assertThat(config.getEndpointMode()).isEqualTo("network");
+        assertThat(config.isIamAuthWebhook()).isFalse();
     }
 
     @Test
@@ -54,6 +60,8 @@ class EksConfigTest {
                 .containsEntry("FLOCI_SERVICES_EKS_DEFAULT_IMAGE", "rancher/k3s:latest")
                 .containsEntry("FLOCI_SERVICES_EKS_API_SERVER_BASE_PORT", "6500")
                 .containsEntry("FLOCI_SERVICES_EKS_API_SERVER_MAX_PORT", "6509")
+                .containsEntry("FLOCI_SERVICES_EKS_ENDPOINT_MODE", "host")
+                .containsEntry("FLOCI_SERVICES_EKS_IAM_AUTH_WEBHOOK", "true")
                 .doesNotContainKey("FLOCI_SERVICES_EKS_DOCKER_NETWORK");
     }
 
@@ -67,6 +75,8 @@ class EksConfigTest {
                 .defaultImage("kindest/node:v1.30")
                 .apiServerPortRange(8000, 50)
                 .dockerNetwork("my-eks-network")
+                .endpointMode("network")
+                .iamAuthWebhook(false)
                 .build()
                 .applyEnvVarsToContainer(container);
 
@@ -77,7 +87,9 @@ class EksConfigTest {
                 .containsEntry("FLOCI_SERVICES_EKS_DEFAULT_IMAGE", "kindest/node:v1.30")
                 .containsEntry("FLOCI_SERVICES_EKS_API_SERVER_BASE_PORT", "8000")
                 .containsEntry("FLOCI_SERVICES_EKS_API_SERVER_MAX_PORT", "8049")
-                .containsEntry("FLOCI_SERVICES_EKS_DOCKER_NETWORK", "my-eks-network");
+                .containsEntry("FLOCI_SERVICES_EKS_DOCKER_NETWORK", "my-eks-network")
+                .containsEntry("FLOCI_SERVICES_EKS_ENDPOINT_MODE", "network")
+                .containsEntry("FLOCI_SERVICES_EKS_IAM_AUTH_WEBHOOK", "false");
     }
 
     @Test

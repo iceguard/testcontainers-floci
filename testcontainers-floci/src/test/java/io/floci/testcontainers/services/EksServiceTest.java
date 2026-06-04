@@ -8,11 +8,19 @@ import io.kubernetes.client.openapi.models.V1NamespaceList;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import software.amazon.awssdk.http.SdkHttpMethod;
+import software.amazon.awssdk.http.SdkHttpRequest;
+import software.amazon.awssdk.http.auth.aws.signer.AwsV4FamilyHttpSigner;
+import software.amazon.awssdk.http.auth.aws.signer.AwsV4HttpSigner;
+import software.amazon.awssdk.http.auth.spi.signer.SignedRequest;
+import software.amazon.awssdk.identity.spi.AwsCredentialsIdentity;
 import software.amazon.awssdk.services.eks.EksClient;
 import software.amazon.awssdk.services.eks.model.Cluster;
 import software.amazon.awssdk.services.eks.model.ClusterStatus;
 
 import java.io.ByteArrayInputStream;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.List;
@@ -49,7 +57,6 @@ class EksServiceTest extends AbstractServiceTest {
 
     @Test
     @Order(2)
-    @Disabled
     void shouldWaitForClusterActiveAndConnect() {
         await().atMost(Duration.ofSeconds(120))
                 .pollInterval(Duration.ofSeconds(2))
@@ -73,6 +80,26 @@ class EksServiceTest extends AbstractServiceTest {
             k8sApiClient.setSslCaCert(new ByteArrayInputStream(caCert));
         }
 
+        // Generate EKS bearer token (equivalent to aws eks get-token)
+        AwsCredentialsIdentity credentials = AwsCredentialsIdentity.create(floci.getAccessKey(), floci.getSecretKey());
+        SdkHttpRequest requestToSign = SdkHttpRequest.builder()
+                .method(SdkHttpMethod.GET)
+                .uri(URI.create(floci.getEndpoint()))
+                .appendHeader("x-k8s-aws-id", clusterName)
+                .appendRawQueryParameter("Action", "GetCallerIdentity")
+                .appendRawQueryParameter("Version", "2011-06-15")
+                .build();
+        SignedRequest signedRequest = AwsV4HttpSigner.create().sign(r -> r
+                .request(requestToSign)
+                .identity(credentials)
+                .putProperty(AwsV4HttpSigner.SERVICE_SIGNING_NAME, "sts")
+                .putProperty(AwsV4HttpSigner.REGION_NAME, floci.getRegion())
+                .putProperty(AwsV4FamilyHttpSigner.AUTH_LOCATION, AwsV4FamilyHttpSigner.AuthLocation.QUERY_STRING)
+                .putProperty(AwsV4FamilyHttpSigner.EXPIRATION_DURATION, Duration.ofSeconds(900)));
+        String eksToken = "k8s-aws-v1." + Base64.getUrlEncoder().withoutPadding()
+                .encodeToString(signedRequest.request().getUri().toString().getBytes(StandardCharsets.UTF_8));
+        k8sApiClient.addDefaultHeader("Authorization", "Bearer " + eksToken);
+
         coreApi = new CoreV1Api(k8sApiClient);
 
         // Wait for the Kubernetes API server to be fully ready
@@ -84,7 +111,6 @@ class EksServiceTest extends AbstractServiceTest {
 
     @Test
     @Order(3)
-    @Disabled
     void shouldCreateNamespace() throws Exception {
         V1Namespace namespace = new V1Namespace()
                 .metadata(new V1ObjectMeta().name(NAMESPACE_NAME));
@@ -101,7 +127,6 @@ class EksServiceTest extends AbstractServiceTest {
 
     @Test
     @Order(4)
-    @Disabled
     void shouldCreateAndReadConfigMap() throws Exception {
         V1ConfigMap configMap = new V1ConfigMap()
                 .metadata(new V1ObjectMeta().name("test-config"))
