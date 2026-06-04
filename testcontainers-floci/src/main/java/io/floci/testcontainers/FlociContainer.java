@@ -1,6 +1,7 @@
 package io.floci.testcontainers;
 
 import io.floci.testcontainers.config.DuckDbConfig;
+import io.floci.testcontainers.config.SecurityConfig;
 import io.floci.testcontainers.config.StorageConfig;
 import io.floci.testcontainers.config.TlsConfig;
 import io.floci.testcontainers.config.services.*;
@@ -67,6 +68,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     private TlsConfig tlsConfig = TlsConfig.builder().build();
     private StorageConfig storageConfig = StorageConfig.builder().build();
     private DuckDbConfig duckDbConfig = DuckDbConfig.builder().build();
+    private SecurityConfig securityConfig = SecurityConfig.builder().build();
 
     // Services config
     private AcmConfig acmConfig = AcmConfig.builder().build();
@@ -1889,6 +1891,36 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     }
 
     /**
+     * Returns the current security configuration. Defaults to CORS headers enabled and no extra CORS lists.
+     *
+     * @return the security configuration
+     */
+    public SecurityConfig getSecurityConfig() {
+        return securityConfig;
+    }
+
+    /**
+     * Configures security settings such as CORS allowed origins, headers, and expose headers.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withSecurityConfig(c -> c
+     *         .extraCorsAllowedOrigins(List.of("https://example.com"))
+     *         .disableCorsHeaders(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link SecurityConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withSecurityConfig(Consumer<SecurityConfig.Builder> configurer) {
+        SecurityConfig.Builder builder = SecurityConfig.builder();
+        configurer.accept(builder);
+        this.securityConfig = builder.build();
+        securityConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
      * Configures all exposed ports of the Floci container
      */
     private void configureExposedPorts() {
@@ -1912,6 +1944,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         tlsConfig.applyEnvVarsToContainer(this);
         storageConfig.applyEnvVarsToContainer(this);
         duckDbConfig.applyEnvVarsToContainer(this);
+        securityConfig.applyEnvVarsToContainer(this);
 
         // Services config
         acmConfig.applyEnvVarsToContainer(this);

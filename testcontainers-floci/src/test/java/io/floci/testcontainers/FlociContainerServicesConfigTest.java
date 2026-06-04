@@ -528,4 +528,13 @@ class FlociContainerServicesConfigTest {
             assertThat(container.getDuckDbConfig().getDefaultImage()).isEqualTo("floci/floci-duck:1.5.18");
         }
     }
+
+    @Test
+    void shouldStoreSecurityConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withSecurityConfig(c -> c.disableCorsHeaders(true));
+
+            assertThat(container.getSecurityConfig().isDisableCorsHeaders()).isTrue();
+        }
+    }
 }
