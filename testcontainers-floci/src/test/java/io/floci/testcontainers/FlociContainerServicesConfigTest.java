@@ -52,6 +52,15 @@ class FlociContainerServicesConfigTest {
     }
 
     @Test
+    void shouldStoreAppSyncConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withAppSyncConfig(c -> c.enabled(false));
+
+            assertThat(container.getAppSyncConfig().isEnabled()).isFalse();
+        }
+    }
+
+    @Test
     void shouldStoreCloudFormationConfigOnContainer() {
         try (FlociContainer container = new FlociContainer()) {
             container.withCloudFormationConfig(c -> c.enabled(false));
@@ -517,6 +526,15 @@ class FlociContainerServicesConfigTest {
 
             assertThat(container.getDuckDbConfig().getUrl()).isEqualTo("http://custom-duckdb:8080");
             assertThat(container.getDuckDbConfig().getDefaultImage()).isEqualTo("floci/floci-duck:1.5.18");
+        }
+    }
+
+    @Test
+    void shouldStoreSecurityConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withSecurityConfig(c -> c.disableCorsHeaders(true));
+
+            assertThat(container.getSecurityConfig().isDisableCorsHeaders()).isTrue();
         }
     }
 }

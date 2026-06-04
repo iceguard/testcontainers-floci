@@ -283,7 +283,7 @@ public class LambdaConfig extends AbstractServiceConfig {
         private int containerIdleTimeoutSeconds = DEFAULT_CONTAINER_IDLE_TIMEOUT_SECONDS;
         private int regionConcurrencyLimit = DEFAULT_REGION_CONCURRENCY_LIMIT;
         private int unreservedConcurrencyMin = DEFAULT_UNRESERVED_CONCURRENCY_MIN;
-        private HotReload hotReload = new DefaultHotReload(false, Optional.empty());
+        private HotReload hotReload = new DefaultHotReload(false, null);
         private String awsConfigPath;
 
         private Builder() {
@@ -422,7 +422,7 @@ public class LambdaConfig extends AbstractServiceConfig {
          * @return this builder
          */
         public Builder hotReload(boolean enabled) {
-            this.hotReload = new DefaultHotReload(enabled, Optional.empty());
+            this.hotReload = new DefaultHotReload(enabled, null);
             return this;
         }
 
@@ -434,7 +434,7 @@ public class LambdaConfig extends AbstractServiceConfig {
          * @return this builder
          */
         public Builder hotReload(boolean enabled, List<String> allowedPaths) {
-            this.hotReload = new DefaultHotReload(enabled, Optional.ofNullable(allowedPaths));
+            this.hotReload = new DefaultHotReload(enabled, allowedPaths);
             return this;
         }
 
@@ -465,6 +465,10 @@ public class LambdaConfig extends AbstractServiceConfig {
     /**
      * Default implementation of {@link HotReload}.
      */
-    private record DefaultHotReload(boolean enabled, Optional<List<String>> allowedPaths) implements HotReload {
+    private record DefaultHotReload(boolean enabled, List<String> allowedPathsList) implements HotReload {
+        @Override
+        public Optional<List<String>> allowedPaths() {
+            return Optional.ofNullable(allowedPathsList);
+        }
     }
 }

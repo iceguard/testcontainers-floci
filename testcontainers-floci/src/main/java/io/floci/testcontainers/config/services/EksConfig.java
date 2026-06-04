@@ -22,6 +22,8 @@ public class EksConfig extends AbstractServiceConfig {
     private static final String DEFAULT_IMAGE = "rancher/k3s:latest";
     private static final int DEFAULT_API_SERVER_BASE_PORT = 6500;
     private static final int DEFAULT_API_SERVER_PORTS_COUNT = 10;
+    private static final String DEFAULT_ENDPOINT_MODE = "host";
+    private static final boolean DEFAULT_IAM_AUTH_WEBHOOK = true;
 
     private final boolean mock;
     private final String provider;
@@ -29,6 +31,8 @@ public class EksConfig extends AbstractServiceConfig {
     private final int apiServerBasePort;
     private final int apiServerPortsCount;
     private final String dockerNetwork;
+    private final String endpointMode;
+    private final boolean iamAuthWebhook;
 
     private EksConfig(Builder builder) {
         super(builder.enabled);
@@ -38,6 +42,8 @@ public class EksConfig extends AbstractServiceConfig {
         this.apiServerBasePort = builder.apiServerBasePort;
         this.apiServerPortsCount = builder.apiServerPortsCount;
         this.dockerNetwork = builder.dockerNetwork;
+        this.endpointMode = builder.endpointMode;
+        this.iamAuthWebhook = builder.iamAuthWebhook;
     }
 
     /**
@@ -112,6 +118,33 @@ public class EksConfig extends AbstractServiceConfig {
         return dockerNetwork;
     }
 
+    /**
+     * Returns the endpoint mode used in {@code describe-cluster} responses.
+     *
+     * <ul>
+     *   <li>{@code host} (default) — {@code https://localhost:<hostPort>}, reachable from the
+     *       host so {@code kubectl}/{@code aws eks} work out of the box.</li>
+     *   <li>{@code network} — the container DNS name {@code https://floci-eks-<name>:6443},
+     *       reachable from other containers on the Docker network (pre-#1118 behaviour). Falls
+     *       back to the host endpoint when Floci runs natively.</li>
+     * </ul>
+     *
+     * @return the endpoint mode
+     */
+    public String getEndpointMode() {
+        return endpointMode;
+    }
+
+    /**
+     * Returns whether a token-authentication webhook is wired into k3s so that the bearer token
+     * produced by {@code aws eks get-token} is validated by Floci and mapped to cluster-admin.
+     *
+     * @return {@code true} if the IAM auth webhook is enabled
+     */
+    public boolean isIamAuthWebhook() {
+        return iamAuthWebhook;
+    }
+
     @Override
     public void applyEnvVarsToContainer(Container<?> container) {
         container.withEnv("FLOCI_SERVICES_EKS_ENABLED", String.valueOf(isEnabled()));
@@ -122,6 +155,8 @@ public class EksConfig extends AbstractServiceConfig {
             container.withEnv("FLOCI_SERVICES_EKS_DEFAULT_IMAGE", defaultImage);
             container.withEnv("FLOCI_SERVICES_EKS_API_SERVER_BASE_PORT", String.valueOf(apiServerBasePort));
             container.withEnv("FLOCI_SERVICES_EKS_API_SERVER_MAX_PORT", String.valueOf(getApiServerMaxPort()));
+            container.withEnv("FLOCI_SERVICES_EKS_ENDPOINT_MODE", endpointMode);
+            container.withEnv("FLOCI_SERVICES_EKS_IAM_AUTH_WEBHOOK", String.valueOf(iamAuthWebhook));
 
             if (dockerNetwork != null) {
                 container.withEnv("FLOCI_SERVICES_EKS_DOCKER_NETWORK", dockerNetwork);
@@ -150,6 +185,8 @@ public class EksConfig extends AbstractServiceConfig {
         private int apiServerBasePort = DEFAULT_API_SERVER_BASE_PORT;
         private int apiServerPortsCount = DEFAULT_API_SERVER_PORTS_COUNT;
         private String dockerNetwork;
+        private String endpointMode = DEFAULT_ENDPOINT_MODE;
+        private boolean iamAuthWebhook = DEFAULT_IAM_AUTH_WEBHOOK;
 
         private Builder() {
             // Allow instantiation only via EksConfig.builder()
@@ -220,6 +257,35 @@ public class EksConfig extends AbstractServiceConfig {
          */
         public Builder dockerNetwork(String dockerNetwork) {
             this.dockerNetwork = dockerNetwork;
+            return this;
+        }
+
+        /**
+         * Sets the endpoint mode used in {@code describe-cluster} responses.
+         *
+         * <ul>
+         *   <li>{@code host} (default) — {@code https://localhost:<hostPort>}</li>
+         *   <li>{@code network} — the container DNS name {@code https://floci-eks-<name>:6443}</li>
+         * </ul>
+         *
+         * @param endpointMode the endpoint mode (default {@value DEFAULT_ENDPOINT_MODE})
+         * @return this builder
+         */
+        public Builder endpointMode(String endpointMode) {
+            this.endpointMode = endpointMode;
+            return this;
+        }
+
+        /**
+         * Controls whether a token-authentication webhook is wired into k3s so that the bearer
+         * token produced by {@code aws eks get-token} is validated by Floci and mapped to
+         * cluster-admin.
+         *
+         * @param iamAuthWebhook {@code true} to enable the IAM auth webhook (default {@value DEFAULT_IAM_AUTH_WEBHOOK})
+         * @return this builder
+         */
+        public Builder iamAuthWebhook(boolean iamAuthWebhook) {
+            this.iamAuthWebhook = iamAuthWebhook;
             return this;
         }
 

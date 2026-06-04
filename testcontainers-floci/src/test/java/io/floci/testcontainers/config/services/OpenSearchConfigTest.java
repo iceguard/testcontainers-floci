@@ -13,7 +13,7 @@ class OpenSearchConfigTest {
         OpenSearchConfig config = OpenSearchConfig.builder().build();
         assertThat(config.isEnabled()).isTrue();
         assertThat(config.isMock()).isFalse();
-        assertThat(config.getDefaultImage()).isEqualTo("opensearchproject/opensearch:2");
+        assertThat(config.getDefaultImage()).isNull();
         assertThat(config.getProxyBasePort()).isEqualTo(9400);
         assertThat(config.getProxyMaxPort()).isEqualTo(9409);
         assertThat(config.getProxyPortsCount()).isEqualTo(10);
@@ -46,7 +46,7 @@ class OpenSearchConfigTest {
         assertThat(container.getEnvMap())
                 .containsEntry("FLOCI_SERVICES_OPENSEARCH_ENABLED", "true")
                 .containsEntry("FLOCI_SERVICES_OPENSEARCH_MOCK", "false")
-                .containsEntry("FLOCI_SERVICES_OPENSEARCH_DEFAULT_IMAGE", "opensearchproject/opensearch:2")
+                .doesNotContainKey("FLOCI_SERVICES_OPENSEARCH_DEFAULT_IMAGE")
                 .containsEntry("FLOCI_SERVICES_OPENSEARCH_PROXY_BASE_PORT", "9400")
                 .containsEntry("FLOCI_SERVICES_OPENSEARCH_PROXY_MAX_PORT", "9409")
                 .doesNotContainKey("FLOCI_SERVICES_OPENSEARCH_DOCKER_NETWORK");

@@ -17,7 +17,6 @@ import org.testcontainers.containers.Container;
 public class OpenSearchConfig extends AbstractServiceConfig {
 
     private static final boolean DEFAULT_MOCK = false;
-    private static final String DEFAULT_IMAGE = "opensearchproject/opensearch:2";
     private static final int DEFAULT_PROXY_BASE_PORT = 9400;
     private static final int DEFAULT_PROXY_PORTS_COUNT = 10;
 
@@ -55,9 +54,9 @@ public class OpenSearchConfig extends AbstractServiceConfig {
     }
 
     /**
-     * Returns the default Docker image used for OpenSearch instances.
+     * Returns the default Docker image used for OpenSearch instances, or {@code null} if not set.
      *
-     * @return the image name
+     * @return the image name, or {@code null}
      */
     public String getDefaultImage() {
         return defaultImage;
@@ -105,7 +104,11 @@ public class OpenSearchConfig extends AbstractServiceConfig {
 
         if (isEnabled()) {
             container.withEnv("FLOCI_SERVICES_OPENSEARCH_MOCK", String.valueOf(mock));
-            container.withEnv("FLOCI_SERVICES_OPENSEARCH_DEFAULT_IMAGE", defaultImage);
+
+            if (defaultImage != null) {
+                container.withEnv("FLOCI_SERVICES_OPENSEARCH_DEFAULT_IMAGE", defaultImage);
+            }
+
             container.withEnv("FLOCI_SERVICES_OPENSEARCH_PROXY_BASE_PORT", String.valueOf(proxyBasePort));
             container.withEnv("FLOCI_SERVICES_OPENSEARCH_PROXY_MAX_PORT", String.valueOf(getProxyMaxPort()));
 
@@ -122,7 +125,7 @@ public class OpenSearchConfig extends AbstractServiceConfig {
 
         private boolean enabled = DEFAULT_ENABLED;
         private boolean mock = DEFAULT_MOCK;
-        private String defaultImage = DEFAULT_IMAGE;
+        private String defaultImage = null;
         private int proxyBasePort = DEFAULT_PROXY_BASE_PORT;
         private int proxyPortsCount = DEFAULT_PROXY_PORTS_COUNT;
         private String dockerNetwork;
@@ -156,7 +159,7 @@ public class OpenSearchConfig extends AbstractServiceConfig {
         /**
          * Sets the default Docker image for OpenSearch instances.
          *
-         * @param defaultImage the image name (default {@value DEFAULT_IMAGE})
+         * @param defaultImage the image name, or {@code null} to use the Floci default (default {@code null})
          * @return this builder
          */
         public Builder defaultImage(String defaultImage) {
