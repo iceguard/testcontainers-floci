@@ -27,15 +27,14 @@ abstract class AbstractServiceTest {
         if (DEBUG_LOGGING) {
             floci = new FlociContainer()
                     .withLogLevel(Level.DEBUG)
-                    .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("DOCKER")))
-                    .withElbV2Config(c -> c.listenerPort(LB_LISTENER_PORT));
+                    .withLogConsumer(new Slf4jLogConsumer(LoggerFactory.getLogger("DOCKER")));
         } else {
             floci = new FlociContainer()
-                    .withLogLevel(Level.INFO)
-                    .withElbV2Config(c -> c.listenerPort(LB_LISTENER_PORT));
+                    .withLogLevel(Level.INFO);
         }
 
-        floci.start();
+        floci.withElbV2Config(c -> c.listenerPort(LB_LISTENER_PORT))
+                .start();
 
         // Floci speaks JSON 1.1 — disable CBOR which is used by some service clients (e.g. Kinesis SDK) as default
         System.setProperty("aws.cborEnabled", "false");
