@@ -70,6 +70,15 @@ class FlociContainerServicesConfigTest {
     }
 
     @Test
+    void shouldStoreCloudMapConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withCloudMapConfig(c -> c.operationCompletionDelaySeconds(5));
+
+            assertThat(container.getCloudMapConfig().getOperationCompletionDelaySeconds()).isEqualTo(5);
+        }
+    }
+
+    @Test
     void shouldStoreCloudFrontConfigOnContainer() {
         try (FlociContainer container = new FlociContainer()) {
             container.withCloudFrontConfig(c -> c.domainSuffix("example.cloudfront.net"));
