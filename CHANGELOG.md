@@ -1,3 +1,13 @@
+# [1.9.0](https://github.com/floci-io/testcontainers-floci/compare/v1.8.0...v1.9.0) (2026-06-18)
+
+
+### Features
+
+* **cloudmap:** added support for AWS CloudMap ([64f41ac](https://github.com/floci-io/testcontainers-floci/commit/64f41ace0d9d4eec2582bcb94c8f340b997263a0))
+* **cloudtrail:** added support for AWS CloudTrail ([7b2f67b](https://github.com/floci-io/testcontainers-floci/commit/7b2f67b2d6d19cd3e1c6163e955ae3e2e040513a))
+
+
+
 # [1.8.0](https://github.com/floci-io/testcontainers-floci/compare/v1.7.0...v1.8.0) (2026-06-04)
 
 
@@ -59,23 +69,6 @@
 * added support for EC2 starting up real containers ([e3f813c](https://github.com/floci-io/testcontainers-floci/commit/e3f813cc764c5577013e416160c52ba7ac6e5e47))
 * added support for ELBv2 with forwarding to real load balancer ([b6385c0](https://github.com/floci-io/testcontainers-floci/commit/b6385c05e3dd18589a8912571166ec674b7a5fe9))
 * use named-volumes as default for data persistence ([4e8169b](https://github.com/floci-io/testcontainers-floci/commit/4e8169b6f60cb7e64f2f87a607905e76ccde5a01))
-
-
-
-# [1.4.0](https://github.com/floci-io/testcontainers-floci/compare/v1.3.0...v1.4.0) (2026-04-30)
-
-
-### Bug Fixes
-
-* running Floci as user root is not required any longer ([8f7251b](https://github.com/floci-io/testcontainers-floci/commit/8f7251b24a0233222f7d7ac0cc7114c450d75cba))
-
-
-### Features
-
-* **athena:** added support for floci-duck mode of AWS Athena ([de5bac6](https://github.com/floci-io/testcontainers-floci/commit/de5bac6e3fb007168857d3751eb8fad70b6b0b26))
-* **codebuild:** added support for dockerNetwork config for CodeBuild ([fb9f600](https://github.com/floci-io/testcontainers-floci/commit/fb9f600f587ebe3fb191d979aa98ecc17922a2f8))
-* **lambda:** added support for Lambda hot-reload configuration ([1ea6b79](https://github.com/floci-io/testcontainers-floci/commit/1ea6b79828e9256f72661cb5ea72b3251bd49206))
-* **services:** added missing configuration options and services from Floci v1.5.9 ([286d782](https://github.com/floci-io/testcontainers-floci/commit/286d7827f6df49e85d49a9693cca4d37283fd623))
 
 
 
