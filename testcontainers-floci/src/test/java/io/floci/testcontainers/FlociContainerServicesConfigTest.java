@@ -518,6 +518,15 @@ class FlociContainerServicesConfigTest {
     }
 
     @Test
+    void shouldStoreCloudTrailConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withCloudTrailConfig(c -> c.enabled(false));
+
+            assertThat(container.getCloudTrailConfig().isEnabled()).isFalse();
+        }
+    }
+
+    @Test
     void shouldStoreBcmDataExportsConfigOnContainer() {
         try (FlociContainer container = new FlociContainer()) {
             container.withBcmDataExportsConfig(c -> c.emitMode("off"));
