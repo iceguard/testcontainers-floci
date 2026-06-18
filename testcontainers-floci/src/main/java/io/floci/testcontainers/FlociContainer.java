@@ -79,6 +79,8 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     private AppSyncConfig appSyncConfig = AppSyncConfig.builder().build();
     private CloudFormationConfig cloudFormationConfig = CloudFormationConfig.builder().build();
     private CloudFrontConfig cloudFrontConfig = CloudFrontConfig.builder().build();
+    private CloudMapConfig cloudMapConfig = CloudMapConfig.builder().build();
+    private CloudTrailConfig cloudTrailConfig = CloudTrailConfig.builder().build();
     private CloudWatchLogsConfig cloudWatchLogsConfig = CloudWatchLogsConfig.builder().build();
     private CloudWatchMetricsConfig cloudWatchMetricsConfig = CloudWatchMetricsConfig.builder().build();
     private CognitoConfig cognitoConfig = CognitoConfig.builder().build();
@@ -601,6 +603,34 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         configurer.accept(builder);
         this.cloudFrontConfig = builder.build();
         cloudFrontConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
+     * CloudMap-specific settings such as operation completion delay.
+     *
+     * @return the CloudMap configuration
+     */
+    public CloudMapConfig getCloudMapConfig() {
+        return cloudMapConfig;
+    }
+
+    /**
+     * Configures CloudMap-specific settings such as operation completion delay.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withCloudMapConfig(c -> c.operationCompletionDelaySeconds(5));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link CloudMapConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withCloudMapConfig(Consumer<CloudMapConfig.Builder> configurer) {
+        CloudMapConfig.Builder builder = CloudMapConfig.builder();
+        configurer.accept(builder);
+        this.cloudMapConfig = builder.build();
+        cloudMapConfig.applyEnvVarsToContainer(this);
         return this;
     }
 
@@ -1861,6 +1891,34 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     }
 
     /**
+     * CloudTrail-specific settings.
+     *
+     * @return the CloudTrail configuration
+     */
+    public CloudTrailConfig getCloudTrailConfig() {
+        return cloudTrailConfig;
+    }
+
+    /**
+     * Configures CloudTrail-specific settings.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withCloudTrailConfig(c -> c.enabled(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link CloudTrailConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withCloudTrailConfig(Consumer<CloudTrailConfig.Builder> configurer) {
+        CloudTrailConfig.Builder builder = CloudTrailConfig.builder();
+        configurer.accept(builder);
+        this.cloudTrailConfig = builder.build();
+        cloudTrailConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
      * Returns the current DuckDB configuration. Defaults to the default image and no custom URL.
      *
      * @return the DuckDB configuration
@@ -1954,6 +2012,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         appConfigDataConfig.applyEnvVarsToContainer(this);
         appSyncConfig.applyEnvVarsToContainer(this);
         cloudFormationConfig.applyEnvVarsToContainer(this);
+        cloudMapConfig.applyEnvVarsToContainer(this);
         cloudWatchLogsConfig.applyEnvVarsToContainer(this);
         cloudWatchMetricsConfig.applyEnvVarsToContainer(this);
         cognitoConfig.applyEnvVarsToContainer(this);
@@ -1997,6 +2056,7 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         costExplorerConfig.applyEnvVarsToContainer(this);
         curConfig.applyEnvVarsToContainer(this);
         bcmDataExportsConfig.applyEnvVarsToContainer(this);
+        cloudTrailConfig.applyEnvVarsToContainer(this);
     }
 
     private static String uniqueShortId() {
