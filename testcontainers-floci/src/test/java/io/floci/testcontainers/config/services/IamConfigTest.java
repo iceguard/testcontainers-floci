@@ -13,6 +13,7 @@ class IamConfigTest {
         IamConfig config = IamConfig.builder().build();
         assertThat(config.isEnabled()).isTrue();
         assertThat(config.isEnforcementEnabled()).isFalse();
+        assertThat(config.isSeedDeployerPrincipal()).isFalse();
     }
 
     @Test
@@ -20,9 +21,11 @@ class IamConfigTest {
         IamConfig config = IamConfig.builder()
                 .enabled(false)
                 .enforcementEnabled(true)
+                .seedDeployerPrincipal(true)
                 .build();
         assertThat(config.isEnabled()).isFalse();
         assertThat(config.isEnforcementEnabled()).isTrue();
+        assertThat(config.isSeedDeployerPrincipal()).isTrue();
     }
 
     @Test
@@ -32,7 +35,17 @@ class IamConfigTest {
 
         assertThat(container.getEnvMap())
                 .containsEntry("FLOCI_SERVICES_IAM_ENABLED", "true")
-                .containsEntry("FLOCI_SERVICES_IAM_ENFORCEMENT_ENABLED", "false");
+                .containsEntry("FLOCI_SERVICES_IAM_ENFORCEMENT_ENABLED", "false")
+                .containsEntry("FLOCI_SERVICES_IAM_SEED_DEPLOYER_PRINCIPAL", "false");
+    }
+
+    @Test
+    void shouldApplyCustomEnvVarsToContainer() {
+        GenericContainer<?> container = genericContainer();
+        IamConfig.builder().seedDeployerPrincipal(true).build().applyEnvVarsToContainer(container);
+
+        assertThat(container.getEnvMap())
+                .containsEntry("FLOCI_SERVICES_IAM_SEED_DEPLOYER_PRINCIPAL", "true");
     }
 
     @Test
