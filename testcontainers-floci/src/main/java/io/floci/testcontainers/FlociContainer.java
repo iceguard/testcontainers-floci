@@ -125,6 +125,11 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     private CostExplorerConfig costExplorerConfig = CostExplorerConfig.builder().build();
     private CurConfig curConfig = CurConfig.builder().build();
     private BcmDataExportsConfig bcmDataExportsConfig = BcmDataExportsConfig.builder().build();
+    private BatchConfig batchConfig = BatchConfig.builder().build();
+    private RdsDataConfig rdsDataConfig = RdsDataConfig.builder().build();
+    private DocumentDbConfig documentDbConfig = DocumentDbConfig.builder().build();
+    private EmrConfig emrConfig = EmrConfig.builder().build();
+    private WafV2Config wafV2Config = WafV2Config.builder().build();
 
     /**
      * Creates a new Floci container with the default image ({@code floci/floci:latest}).
@@ -1919,6 +1924,148 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
     }
 
     /**
+     * Batch-specific settings such as runner mode and Docker network.
+     *
+     * @return the Batch configuration
+     */
+    public BatchConfig getBatchConfig() {
+        return batchConfig;
+    }
+
+    /**
+     * Configures Batch-specific settings such as runner mode and Docker network.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withBatchConfig(c -> c.runnerMode("deferred"));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link BatchConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withBatchConfig(Consumer<BatchConfig.Builder> configurer) {
+        BatchConfig.Builder builder = BatchConfig.builder();
+        configurer.accept(builder);
+        this.batchConfig = builder.build();
+        batchConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
+     * RDS Data API-specific settings such as transaction TTL.
+     *
+     * @return the RDS Data configuration
+     */
+    public RdsDataConfig getRdsDataConfig() {
+        return rdsDataConfig;
+    }
+
+    /**
+     * Configures RDS Data API-specific settings such as transaction TTL.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withRdsDataConfig(c -> c.transactionTtlSeconds(300));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link RdsDataConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withRdsDataConfig(Consumer<RdsDataConfig.Builder> configurer) {
+        RdsDataConfig.Builder builder = RdsDataConfig.builder();
+        configurer.accept(builder);
+        this.rdsDataConfig = builder.build();
+        rdsDataConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
+     * DocumentDB-specific settings such as mock mode, default image and Docker network.
+     *
+     * @return the DocumentDB configuration
+     */
+    public DocumentDbConfig getDocumentDbConfig() {
+        return documentDbConfig;
+    }
+
+    /**
+     * Configures DocumentDB-specific settings such as mock mode, default image and Docker network.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withDocumentDbConfig(c -> c
+     *         .mock(true)
+     *         .defaultImage("mongo:8.0"));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link DocumentDbConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withDocumentDbConfig(Consumer<DocumentDbConfig.Builder> configurer) {
+        DocumentDbConfig.Builder builder = DocumentDbConfig.builder();
+        configurer.accept(builder);
+        this.documentDbConfig = builder.build();
+        documentDbConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
+     * EMR-specific settings such as default release label and cluster startup delay.
+     *
+     * @return the EMR configuration
+     */
+    public EmrConfig getEmrConfig() {
+        return emrConfig;
+    }
+
+    /**
+     * Configures EMR-specific settings such as default release label and cluster startup delay.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withEmrConfig(c -> c.defaultReleaseLabel("emr-7.8.0"));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link EmrConfig.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withEmrConfig(Consumer<EmrConfig.Builder> configurer) {
+        EmrConfig.Builder builder = EmrConfig.builder();
+        configurer.accept(builder);
+        this.emrConfig = builder.build();
+        emrConfig.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
+     * WAF V2-specific settings.
+     *
+     * @return the WAF V2 configuration
+     */
+    public WafV2Config getWafV2Config() {
+        return wafV2Config;
+    }
+
+    /**
+     * Configures WAF V2-specific settings.
+     *
+     * <pre>{@code
+     * new FlociContainer()
+     *     .withWafV2Config(c -> c.enabled(false));
+     * }</pre>
+     *
+     * @param configurer a consumer that receives a {@link WafV2Config.Builder} to modify
+     * @return this container instance
+     */
+    public FlociContainer withWafV2Config(Consumer<WafV2Config.Builder> configurer) {
+        WafV2Config.Builder builder = WafV2Config.builder();
+        configurer.accept(builder);
+        this.wafV2Config = builder.build();
+        wafV2Config.applyEnvVarsToContainer(this);
+        return this;
+    }
+
+    /**
      * Returns the current DuckDB configuration. Defaults to the default image and no custom URL.
      *
      * @return the DuckDB configuration
@@ -2057,6 +2204,11 @@ public class FlociContainer extends GenericContainer<FlociContainer> {
         curConfig.applyEnvVarsToContainer(this);
         bcmDataExportsConfig.applyEnvVarsToContainer(this);
         cloudTrailConfig.applyEnvVarsToContainer(this);
+        batchConfig.applyEnvVarsToContainer(this);
+        rdsDataConfig.applyEnvVarsToContainer(this);
+        documentDbConfig.applyEnvVarsToContainer(this);
+        emrConfig.applyEnvVarsToContainer(this);
+        wafV2Config.applyEnvVarsToContainer(this);
     }
 
     private static String uniqueShortId() {

@@ -536,6 +536,62 @@ class FlociContainerServicesConfigTest {
     }
 
     @Test
+    void shouldStoreBatchConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withBatchConfig(c -> c
+                    .runnerMode("deferred")
+                    .dockerNetwork("my-batch-network"));
+
+            assertThat(container.getBatchConfig().getRunnerMode()).isEqualTo("deferred");
+            assertThat(container.getBatchConfig().getDockerNetwork()).isEqualTo("my-batch-network");
+        }
+    }
+
+    @Test
+    void shouldStoreRdsDataConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withRdsDataConfig(c -> c.transactionTtlSeconds(300));
+
+            assertThat(container.getRdsDataConfig().getTransactionTtlSeconds()).isEqualTo(300);
+        }
+    }
+
+    @Test
+    void shouldStoreDocumentDbConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withDocumentDbConfig(c -> c
+                    .mock(true)
+                    .defaultImage("mongo:8.0")
+                    .dockerNetwork("my-docdb-network"));
+
+            assertThat(container.getDocumentDbConfig().isMock()).isTrue();
+            assertThat(container.getDocumentDbConfig().getDefaultImage()).isEqualTo("mongo:8.0");
+            assertThat(container.getDocumentDbConfig().getDockerNetwork()).isEqualTo("my-docdb-network");
+        }
+    }
+
+    @Test
+    void shouldStoreEmrConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withEmrConfig(c -> c
+                    .defaultReleaseLabel("emr-7.8.0")
+                    .clusterStartupDelaySeconds(10));
+
+            assertThat(container.getEmrConfig().getDefaultReleaseLabel()).isEqualTo("emr-7.8.0");
+            assertThat(container.getEmrConfig().getClusterStartupDelaySeconds()).isEqualTo(10);
+        }
+    }
+
+    @Test
+    void shouldStoreWafV2ConfigOnContainer() {
+        try (FlociContainer container = new FlociContainer()) {
+            container.withWafV2Config(c -> c.enabled(false));
+
+            assertThat(container.getWafV2Config().isEnabled()).isFalse();
+        }
+    }
+
+    @Test
     void shouldStoreDuckDbConfigOnContainer() {
         try (FlociContainer container = new FlociContainer()) {
             container.withDuckDbConfig(c -> c
