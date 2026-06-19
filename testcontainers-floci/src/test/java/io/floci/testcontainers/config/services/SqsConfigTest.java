@@ -13,7 +13,7 @@ class SqsConfigTest {
         SqsConfig config = SqsConfig.builder().build();
         assertThat(config.isEnabled()).isTrue();
         assertThat(config.getDefaultVisibilityTimeout()).isEqualTo(30);
-        assertThat(config.getMaxMessageSize()).isEqualTo(262144);
+        assertThat(config.getMaxMessageSize()).isEqualTo(1048576);
         assertThat(config.isClearFifoDeduplicationCacheOnPurge()).isTrue();
     }
 
@@ -39,7 +39,7 @@ class SqsConfigTest {
         assertThat(container.getEnvMap())
                 .containsEntry("FLOCI_SERVICES_SQS_ENABLED", "true")
                 .containsEntry("FLOCI_SERVICES_SQS_DEFAULT_VISIBILITY_TIMEOUT", "30")
-                .containsEntry("FLOCI_SERVICES_SQS_MAX_MESSAGE_SIZE", "262144")
+                .containsEntry("FLOCI_SERVICES_SQS_MAX_MESSAGE_SIZE", "1048576")
                 .containsEntry("FLOCI_SERVICES_SQS_CLEAR_FIFO_DEDUPLICATION_CACHE_ON_PURGE", "true");
     }
 
