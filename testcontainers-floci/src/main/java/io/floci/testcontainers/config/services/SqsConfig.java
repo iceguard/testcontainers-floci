@@ -17,7 +17,7 @@ import org.testcontainers.containers.Container;
 public class SqsConfig extends AbstractServiceConfig {
 
     private static final int DEFAULT_VISIBILITY_TIMEOUT = 30;
-    private static final int DEFAULT_MAX_MESSAGE_SIZE = 262144;
+    private static final int DEFAULT_MAX_MESSAGE_SIZE = 1048576;
     private static final boolean DEFAULT_CLEAR_FIFO_DEDUPLICATION_CACHE_ON_PURGE = true;
 
     private final int defaultVisibilityTimeout;
