@@ -15,12 +15,15 @@ import org.testcontainers.containers.Container;
 public class IamConfig extends AbstractServiceConfig {
 
     private static final boolean DEFAULT_ENFORCEMENT_ENABLED = false;
+    private static final boolean DEFAULT_SEED_DEPLOYER_PRINCIPAL = false;
 
     private final boolean enforcementEnabled;
+    private final boolean seedDeployerPrincipal;
 
     private IamConfig(Builder builder) {
         super(builder.enabled);
         this.enforcementEnabled = builder.enforcementEnabled;
+        this.seedDeployerPrincipal = builder.seedDeployerPrincipal;
     }
 
     /**
@@ -42,12 +45,22 @@ public class IamConfig extends AbstractServiceConfig {
         return enforcementEnabled;
     }
 
+    /**
+     * Returns whether the deployer principal should be seeded.
+     *
+     * @return {@code true} if the deployer principal should be seeded
+     */
+    public boolean isSeedDeployerPrincipal() {
+        return seedDeployerPrincipal;
+    }
+
     @Override
     public void applyEnvVarsToContainer(Container<?> container) {
         container.withEnv("FLOCI_SERVICES_IAM_ENABLED", String.valueOf(isEnabled()));
 
         if (isEnabled()) {
             container.withEnv("FLOCI_SERVICES_IAM_ENFORCEMENT_ENABLED", String.valueOf(enforcementEnabled));
+            container.withEnv("FLOCI_SERVICES_IAM_SEED_DEPLOYER_PRINCIPAL", String.valueOf(seedDeployerPrincipal));
         }
     }
 
@@ -58,6 +71,7 @@ public class IamConfig extends AbstractServiceConfig {
 
         private boolean enabled = DEFAULT_ENABLED;
         private boolean enforcementEnabled = DEFAULT_ENFORCEMENT_ENABLED;
+        private boolean seedDeployerPrincipal = DEFAULT_SEED_DEPLOYER_PRINCIPAL;
 
         private Builder() {
             // Allow instantiation only via IamConfig.builder()
@@ -82,6 +96,17 @@ public class IamConfig extends AbstractServiceConfig {
          */
         public Builder enforcementEnabled(boolean enforcementEnabled) {
             this.enforcementEnabled = enforcementEnabled;
+            return this;
+        }
+
+        /**
+         * Enables or disables seeding the deployer principal.
+         *
+         * @param seedDeployerPrincipal {@code true} to seed the deployer principal (default {@value DEFAULT_SEED_DEPLOYER_PRINCIPAL})
+         * @return this builder
+         */
+        public Builder seedDeployerPrincipal(boolean seedDeployerPrincipal) {
+            this.seedDeployerPrincipal = seedDeployerPrincipal;
             return this;
         }
 
