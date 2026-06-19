@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -116,9 +117,19 @@ class Ec2ServiceTest extends AbstractServiceTest {
 
         JSch sshClient = new JSch();
         sshClient.addIdentity("key", privateKeyPem, null, null);
-        Session session = sshClient.getSession("root", "localhost", floci.getEc2Config().getSshPortRangeStart());
-        session.setConfig("StrictHostKeyChecking", "no");
-        session.connect(30_000);
+
+        // The instance may be RUNNING but sshd not yet ready — retry until the connection succeeds
+        var sessionRef = new AtomicReference<Session>();
+        await().atMost(Duration.ofSeconds(60))
+                .pollInterval(Duration.ofSeconds(2))
+                .ignoreExceptions()
+                .untilAsserted(() -> {
+                    Session s = sshClient.getSession("root", "localhost", floci.getEc2Config().getSshPortRangeStart());
+                    s.setConfig("StrictHostKeyChecking", "no");
+                    s.connect(5_000);
+                    sessionRef.set(s);
+                });
+        Session session = sessionRef.get();
 
         try {
             // Verify the VM is Linux
