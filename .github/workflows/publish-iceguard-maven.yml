@@ -32,11 +32,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-          server-id: github
-          server-username: GITHUB_ACTOR
-          server-password: GITHUB_TOKEN
 
       - name: Publish Maven artifacts
-        run: mvn -B deploy -DskipTests
+        run: mvn -B deploy -DskipTests -s .github/settings.xml
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN || github.token }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GH_API_TOKEN }}
