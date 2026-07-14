@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.floci</groupId>
+    <groupId>io.iceguard</groupId>
     <artifactId>testcontainers-floci-parent</artifactId>
     <version>2.11.1-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -29,10 +29,18 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/floci-io/testcontainers-floci.git</connection>
-        <developerConnection>scm:git:ssh://github.com:floci-io/testcontainers-floci.git</developerConnection>
-        <url>https://github.com/floci-io/testcontainers-floci</url>
+        <connection>scm:git:git://github.com/iceguard/testcontainers-floci.git</connection>
+        <developerConnection>scm:git:ssh://github.com/iceguard/testcontainers-floci.git</developerConnection>
+        <url>https://github.com/iceguard/testcontainers-floci</url>
     </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Iceguard Maven Packages</name>
+            <url>https://maven.pkg.github.com/iceguard/iceguard</url>
+        </repository>
+    </distributionManagement>
 
     <modules>
         <module>testcontainers-floci</module>
@@ -58,7 +66,7 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>io.floci</groupId>
+                <groupId>io.iceguard</groupId>
                 <artifactId>testcontainers-floci</artifactId>
                 <version>${project.version}</version>
             </dependency>

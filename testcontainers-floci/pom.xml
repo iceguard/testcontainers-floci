@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>io.floci</groupId>
+        <groupId>io.iceguard</groupId>
         <artifactId>testcontainers-floci-parent</artifactId>
         <version>2.11.1-SNAPSHOT</version>
     </parent>
