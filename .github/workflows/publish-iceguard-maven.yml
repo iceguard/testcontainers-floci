@@ -33,6 +33,17 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Set immutable artifact version
+        run: |
+          current_version="$(mvn -q help:evaluate -Dexpression=project.version -DforceStdout)"
+          base_version="${current_version%%-iceguard.*}"
+          base_version="${base_version%-SNAPSHOT}"
+          artifact_version="${base_version}-iceguard.$(git rev-parse --short=12 HEAD)"
+          mvn -B org.codehaus.mojo:versions-maven-plugin:2.21.0:set \
+            -DnewVersion="${artifact_version}" \
+            -DgenerateBackupPoms=false
+          echo "Publishing ${artifact_version}"
+
       - name: Publish Maven artifacts
         run: mvn -B deploy -DskipTests -s .github/settings.xml
         env:
